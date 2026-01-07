@@ -57,7 +57,9 @@ export const SignInForm = ({
     }
 
     if (res.error) {
-      setError("Email atau password salah.");
+      if (res.code === "wrong_password") setError("Wrong email or password.");
+      if (res.code === "email_not_verified")
+        setError("Email is not verified. Please verify your email.");
       return;
     }
 
@@ -116,11 +118,12 @@ export const SignInForm = ({
               disabled={form.formState.isSubmitting}>
               Sign In
             </Button>
-
             {error && (
-              <div className='rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700'>
-                {error}
-              </div>
+              <Alert
+                type='error'
+                title='Authentication Error'
+                message={error}
+              />
             )}
 
             <div className='relative'>

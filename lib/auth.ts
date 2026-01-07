@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./prisma.init";
 import z from "zod";
 import bcrypt from "bcrypt";
+import { EmailNotVerifiedError, WrongPasswordError } from "@/types/errors";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -47,10 +48,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!user?.password) return null;
 
-        if (!user.emailVerified) return null;
+        if (!user.emailVerified) {
+          throw new EmailNotVerifiedError();
+        }
 
         const ok = await bcrypt.compare(parsed.data.password, user.password);
-        if (!ok) return null;
+        if (!ok) {
+          throw new WrongPasswordError();
+        }
 
         return {
           id: user.id,
