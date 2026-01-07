@@ -54,7 +54,7 @@ export default function HeroSection({
           <div className='relative'>
             <div className='relative rounded-2xl overflow-hidden shadow-cta'>
               <Image
-                src={"/assets/character-art.webp"}
+                src={"/assets/art-landing-page.webp"}
                 width={1024}
                 height={1024}
                 alt='Elegant invitation displayed on smartphone with floral decorations and rings on marble surface'
