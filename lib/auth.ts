@@ -6,12 +6,27 @@ import { prisma } from "./prisma.init";
 import z from "zod";
 import bcrypt from "bcrypt";
 import { EmailNotVerifiedError, WrongPasswordError } from "@/types/errors";
+import { Plan } from "./generated/enums";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/sign-in",
+  },
+  events: {
+    createUser: async ({ user }) => {
+      if (!user.id) return;
+
+      await prisma.subscription.upsert({
+        where: { userId: user.id },
+        update: {},
+        create: {
+          userId: user.id,
+          plan: Plan.FREE,
+        },
+      });
+    },
   },
   providers: [
     Google({
