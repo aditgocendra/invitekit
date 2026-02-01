@@ -1,9 +1,8 @@
 export type FreeWeddingMinimalType = {
-  coupleName: string;
   groomName: string;
   brideName: string;
-  dateFormatted: string;
+  quote: string;
+  resepsiTime: Date;
+  place: string;
   address: string;
-  akadTime?: string;
-  resepsiTime?: string;
 };
