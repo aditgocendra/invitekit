@@ -1,0 +1,56 @@
+import { EventType } from "@/lib/generated/enums";
+import { prisma } from "@/lib/prisma.init";
+
+interface CreateInvitationEventProps {
+  userId: string;
+  thumb?: string;
+  templateKey: string;
+  type: EventType;
+  configJson: {
+    [key: string]: string | boolean | number | Date;
+  };
+}
+
+export const createInvitationEvent = async (
+  props: CreateInvitationEventProps,
+) => {
+  return await prisma.event.create({
+    data: {
+      userId: props.userId,
+      templateKey: props.templateKey,
+      thumb: props.thumb,
+      configJson: props.configJson,
+      type: props.type,
+    },
+  });
+};
+
+interface UpdateInvitationEventProps {
+  id: string;
+  thumb?: string;
+  configJson?: {
+    [key: string]: string | boolean | number | Date;
+  };
+}
+
+export const updateEvent = async (props: UpdateInvitationEventProps) => {
+  return await prisma.event.update({
+    where: { id: props.id },
+    data: {
+      configJson: props.configJson,
+      thumb: props.thumb,
+    },
+  });
+};
+
+export const getEventByUserId = async (id: string) => {
+  return await prisma.event.findMany({ where: { userId: id } });
+};
+
+export const getEventById = async (id: string) => {
+  return await prisma.event.findUnique({ where: { id } });
+};
+
+export const deleteEventById = async (id: string) => {
+  return await prisma.event.delete({ where: { id } });
+};
