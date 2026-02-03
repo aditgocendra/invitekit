@@ -44,7 +44,7 @@ export default async function CreateInvitation() {
                 <DialogCreate templateKey={template.key} />
 
                 <Link
-                  href={`/preview/${template.key}`}
+                  href={`/preview/template?key=${template.key}`}
                   target='_blank'
                   className={`${buttonVariants({ size: "sm" })} min-w-20 text-xs`}>
                   Preview
