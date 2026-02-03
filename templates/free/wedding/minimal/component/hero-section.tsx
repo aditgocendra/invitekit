@@ -3,9 +3,13 @@ import Image from "next/image";
 import { RefObject } from "react";
 
 export default function HeroSection({
+  groomName,
+  brideName,
   ref,
   scrollToView,
 }: {
+  groomName: string | undefined;
+  brideName: string | undefined;
   ref: RefObject<HTMLDivElement | null>;
   scrollToView: (view: "view1" | "view2" | "view3") => void;
 }) {
@@ -30,7 +34,7 @@ export default function HeroSection({
           </h1>
 
           <h3 className='font-parisienne text-6xl font-bold text-white text-center text-nowrap mb-8'>
-            Peter & Siti
+            {groomName || "Groom"} & {brideName || "Bride"}
           </h3>
 
           <Button

@@ -1,4 +1,7 @@
-import FreeWeddingMinimalTemplate from "@/templates/free/wedding/minimal";
+import { getEventById } from "@/services/invitation/event.services";
+import { TEMPLATE_REGISTRY } from "@/templates/registry";
+import { JsonValue } from "@/types/json";
+import { notFound } from "next/navigation";
 
 export default async function invitationDigital({
   params,
@@ -7,13 +10,13 @@ export default async function invitationDigital({
 }) {
   const { slug } = await params;
 
-  return (
-    <FreeWeddingMinimalTemplate
-      address='asdasd'
-      brideName='asdasd'
-      coupleName='asdasd'
-      dateFormatted='asdasd'
-      groomName='asdasd'
-    />
-  );
+  const event = await getEventById(slug[0]);
+
+  if (!event) return notFound();
+
+  const template = TEMPLATE_REGISTRY[event.templateKey];
+
+  if (!template) return notFound();
+
+  return <template.Component config={event.configJson as JsonValue} />;
 }

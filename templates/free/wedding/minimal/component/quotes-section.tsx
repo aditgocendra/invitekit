@@ -5,9 +5,11 @@ import { RefObject } from "react";
 export default function QuotesSection({
   ref,
   scrollToView,
+  quotes,
 }: {
   ref: RefObject<HTMLDivElement | null>;
   scrollToView: (view: "view1" | "view2" | "view3") => void;
+  quotes?: string;
 }) {
   return (
     <section
@@ -26,8 +28,7 @@ export default function QuotesSection({
 
         <div className='absolute bottom-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center'>
           <p className='w-full font-parisienne text-2xl font-bold text-white/70 text-center'>
-            Agak lain memang kawan dunia ini, disini salah yang sana salah
-            bodolah
+            {quotes || "Quotes"}
           </p>
         </div>
 

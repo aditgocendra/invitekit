@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import FieldInput from "../ui/field";
+import { FieldInput } from "../ui/field";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { Label } from "../ui/label";

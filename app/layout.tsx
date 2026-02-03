@@ -7,6 +7,7 @@ import {
   Parisienne,
 } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
     <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${fredoka.variable} ${parisienne.variable} antialiased`}>
+          <Toaster />
         {children}
       </body>
     </html>
