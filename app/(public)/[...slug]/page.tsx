@@ -1,4 +1,4 @@
-import { getEventById } from "@/services/invitation/event.services";
+import { getEventBySlug } from "@/services/invitation/event.services";
 import { TEMPLATE_REGISTRY } from "@/templates/registry";
 import { JsonValue } from "@/types/json";
 import { notFound } from "next/navigation";
@@ -10,7 +10,7 @@ export default async function invitationDigital({
 }) {
   const { slug } = await params;
 
-  const event = await getEventById(slug[0]);
+  const event = await getEventBySlug(slug[0]);
 
   if (!event) return notFound();
 
