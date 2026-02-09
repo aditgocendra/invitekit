@@ -7,9 +7,11 @@ import {
   getEventByUserId,
   updateEvent,
 } from "@/services/invitation/event.services";
+import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
 import { chromium } from "playwright"; // atau puppeteer
 import z from "zod";
+import { nanoid } from "nanoid";
 
 const Primitive = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 
@@ -91,6 +93,7 @@ export async function POST(req: NextRequest) {
       userId: session.user.id,
       configJson: body.values,
       type: "WEDDING",
+      slug: nanoid(6),
     });
 
     const imagePath = await uploadImage(r.id);
@@ -160,6 +163,10 @@ export async function DELETE(req: NextRequest) {
 
   if (event?.userId !== session.user.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  if (event.invitations.length > 0) {
+    await deleteInvitationsByIds(event.invitations.map((i) => i.id));
   }
 
   const r = await deleteEventById(eventId);

@@ -5,6 +5,7 @@ interface CreateInvitationEventProps {
   userId: string;
   thumb?: string;
   templateKey: string;
+  slug: string;
   type: EventType;
   configJson: {
     [key: string]: string | boolean | number | Date;
@@ -21,6 +22,7 @@ export const createInvitationEvent = async (
       thumb: props.thumb,
       configJson: props.configJson,
       type: props.type,
+      slug: props.slug,
     },
   });
 };
@@ -48,7 +50,14 @@ export const getEventByUserId = async (id: string) => {
 };
 
 export const getEventById = async (id: string) => {
-  return await prisma.event.findUnique({ where: { id } });
+  return await prisma.event.findUnique({
+    where: { id },
+    include: { invitations: true },
+  });
+};
+
+export const getEventBySlug = async (slug: string) => {
+  return await prisma.event.findUnique({ where: { slug } });
 };
 
 export const deleteEventById = async (id: string) => {
