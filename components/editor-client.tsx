@@ -12,6 +12,7 @@ import { useLoading } from "@/hooks/use-loading";
 
 type EditorClientProps<TConfig> = {
   eventId: string;
+  slug: string;
   templateKey: string;
   config: TConfig;
   FormComponent: (props: {
@@ -23,6 +24,7 @@ type EditorClientProps<TConfig> = {
 
 export default function EditorClient<TConfig>({
   eventId,
+  slug,
   templateKey,
   config,
   FormComponent,
@@ -114,7 +116,7 @@ export default function EditorClient<TConfig>({
           </Button>
 
           <Link
-            href={`/${eventId}`}
+            href={`/${slug}`}
             target='_blank'
             className={buttonVariants()}>
             <Globe />

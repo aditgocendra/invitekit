@@ -24,6 +24,7 @@ export default async function DecorationPage({ searchParams }: PageProps) {
   return (
     <EditorClient<JsonValue>
       eventId={event.id as string}
+      slug={event.slug}
       templateKey={template.key}
       config={config}
       FormComponent={template.FormComponent}
