@@ -8,7 +8,7 @@ import {
   Map,
   PieChart,
   Send,
-  SquareTerminal,
+  Wallpaper,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -34,9 +34,9 @@ const data = {
   },
   navMain: [
     {
-      title: "Invitation",
+      title: "Event",
       url: "#",
-      icon: SquareTerminal,
+      icon: Wallpaper,
       isActive: true,
       items: [
         {
