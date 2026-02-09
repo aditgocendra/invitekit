@@ -1,19 +1,25 @@
-import { SignJWT, jwtVerify, JWTPayload } from "jose"
+import { SignJWT, jwtVerify, JWTPayload } from "jose";
 
-const VERIFY_SECRET = new TextEncoder().encode(process.env.VERIFY_SECRET!)
-const RESET_SECRET = new TextEncoder().encode(process.env.RESET_SECRET!)
-
+const VERIFY_SECRET = new TextEncoder().encode(process.env.VERIFY_SECRET!);
+const RESET_SECRET = new TextEncoder().encode(process.env.RESET_SECRET!);
+const INV_SECRET = new TextEncoder().encode(process.env.INV_SECRET!);
 export type VerifyEmailPayload = JWTPayload & {
-  type: "verify-email"
-  email: string
-  jti: string
-}
+  type: "verify-email";
+  email: string;
+  jti: string;
+};
 
 export type ResetPasswordPayload = JWTPayload & {
-  type: "reset-password"
-  email: string
-  jti: string
-}
+  type: "reset-password";
+  email: string;
+  jti: string;
+};
+
+export type InvitationPayload = JWTPayload & {
+  type: "invitation-event";
+  name: string;
+  jti: string;
+};
 
 // 60 menit
 export async function signVerifyEmailToken(payload: VerifyEmailPayload) {
@@ -21,7 +27,7 @@ export async function signVerifyEmailToken(payload: VerifyEmailPayload) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("60m")
-    .sign(VERIFY_SECRET)
+    .sign(VERIFY_SECRET);
 }
 
 // 30 menit
@@ -30,15 +36,31 @@ export async function signResetPasswordToken(payload: ResetPasswordPayload) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30m")
-    .sign(RESET_SECRET)
+    .sign(RESET_SECRET);
+}
+
+export async function signInvitationToken(payload: InvitationPayload) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("30d")
+    .sign(INV_SECRET);
 }
 
 export async function verifyEmailToken(token: string) {
-  const { payload } = await jwtVerify<VerifyEmailPayload>(token, VERIFY_SECRET)
-  return payload
+  const { payload } = await jwtVerify<VerifyEmailPayload>(token, VERIFY_SECRET);
+  return payload;
 }
 
 export async function verifyResetToken(token: string) {
-  const { payload } = await jwtVerify<ResetPasswordPayload>(token, RESET_SECRET)
-  return payload
+  const { payload } = await jwtVerify<ResetPasswordPayload>(
+    token,
+    RESET_SECRET,
+  );
+  return payload;
+}
+
+export async function verifyIinvitationToken(token: string) {
+  const { payload } = await jwtVerify<InvitationPayload>(token, INV_SECRET);
+  return payload;
 }
