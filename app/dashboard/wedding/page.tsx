@@ -95,7 +95,8 @@ export default async function Wedding() {
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link
-                        href={`/preview/template?key=${template.key}`}
+                        href={`/preview?id=${d.id}`}
+                        target='_blank'
                         className='flex items-center gap-2'>
                         <Fullscreen className='text-muted-foreground' />
                         <span>Preview</span>
