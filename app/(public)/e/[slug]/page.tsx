@@ -3,14 +3,14 @@ import { TEMPLATE_REGISTRY } from "@/templates/registry";
 import { JsonValue } from "@/types/json";
 import { notFound } from "next/navigation";
 
-export default async function invitationDigital({
+export default async function PublicEvent({
   params,
 }: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
 
-  const event = await getEventBySlug(slug[0]);
+  const event = await getEventBySlug(slug);
 
   if (!event) return notFound();
 
