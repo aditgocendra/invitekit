@@ -10,6 +10,7 @@ import {
 } from "@/services/invitation/invitation.services";
 import { SentStatusType } from "@/types/rsvp";
 import { InvitationEventFormSchema } from "@/validation/event.validation";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -50,17 +51,20 @@ export async function POST(req: NextRequest) {
       jti,
     });
 
+    const slug = nanoid(6);
+
     const data = {
       name: parsed.data.name,
       phone: parsed.data.phoneNumber,
       token: token,
+      slug: slug,
       eventId: eventId,
       sentAt: new Date(),
     };
 
     const inv = await createInvitation({ ...data });
 
-    const message = `Haii please join us ${process.env.NEXT_PUBLIC_APP_URL}/${event.slug}`;
+    const message = `Haii please join us ${process.env.NEXT_PUBLIC_APP_URL}/i/${slug}`;
 
     const r = await sendWhatsApp({
       target: parsed.data.phoneNumber,
