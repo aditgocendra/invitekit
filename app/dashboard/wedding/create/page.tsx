@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import FormWeddingMinimal from "@/templates/free/wedding/minimal/component/form-w-minimal";
 import { TEMPLATE_REGISTRY } from "@/templates/registry";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,7 +40,30 @@ export default async function CreateInvitation() {
               <div className='absolute inset-0 rounded-xl bg-linear-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
               <div className='absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300'>
-                <DialogCreate templateKey={template.key} />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      size='sm'
+                      className='min-w-20 text-xs'>
+                      Chose
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent
+                    className='sm:max-w-[725px] max-h-[95vh] flex flex-col '
+                    showCloseButton={false}>
+                    <DialogHeader>
+                      <DialogTitle>Create Invitation</DialogTitle>
+                      <DialogDescription>
+                        Please fill the form
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className='overflow-y-auto flex-1 min-h-0 pr-2'>
+                      <template.FormComponent templateKey={template.key} />
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
                 <Link
                   href={`/preview/template?key=${template.key}`}
@@ -55,30 +77,5 @@ export default async function CreateInvitation() {
         ))}
       </div>
     </>
-  );
-}
-
-function DialogCreate({ templateKey }: { templateKey: string }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          size='sm'
-          className='min-w-20 text-xs'>
-          Chose
-        </Button>
-      </DialogTrigger>
-
-      <DialogContent
-        className='sm:max-w-[725px]'
-        showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>Create Invitation</DialogTitle>
-          <DialogDescription>Please fill the form</DialogDescription>
-        </DialogHeader>
-
-        <FormWeddingMinimal templateKey={templateKey} />
-      </DialogContent>
-    </Dialog>
   );
 }
