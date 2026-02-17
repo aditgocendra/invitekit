@@ -116,7 +116,7 @@ export default function EditorClient<TConfig>({
           </Button>
 
           <Link
-            href={`/${slug}`}
+            href={`/e/${slug}`}
             target='_blank'
             className={buttonVariants()}>
             <Globe />
