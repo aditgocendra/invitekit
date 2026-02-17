@@ -118,6 +118,7 @@ model Invitation {
   eventId    String
   phone      String?
   token      String     @unique
+  slug       String     @unique
   sentAt     DateTime?
   openedAt   DateTime?
   sentStatus SentStatus
