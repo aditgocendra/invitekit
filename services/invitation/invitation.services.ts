@@ -52,7 +52,7 @@ export const getInvitationByEventId = async (
 export const getInvitationById = async (id: string) => {
   return await prisma.invitation.findUnique({
     where: { id },
-    select: { id: true, event: { select: { userId: true } } },
+    select: { id: true, event: { select: { userId: true } }, rsvp: true },
   });
 };
 
@@ -71,11 +71,19 @@ export const getInvitationsByIds = async (ids: string[]) => {
   });
 };
 
+export const getInvitationBySlug = async (slug: string) => {
+  return await prisma.invitation.findUnique({
+    where: { slug },
+    include: { event: true },
+  });
+};
+
 interface CreateInvitationEventProps {
   name: string;
   phone: string;
   token: string;
   eventId: string;
+  slug: string;
   sentAt: Date;
 }
 
@@ -87,8 +95,22 @@ export const createInvitation = async (data: CreateInvitationEventProps) => {
       sentAt: data.sentAt,
       sentStatus: SentStatus.PENDING,
       token: data.token,
+      slug: data.slug,
       eventId: data.eventId,
     },
+  });
+};
+
+export const updateOpenedStatus = async ({
+  id,
+  openedAt,
+}: {
+  id: string;
+  openedAt: Date;
+}) => {
+  return await prisma.invitation.update({
+    where: { id },
+    data: { openedAt },
   });
 };
 
