@@ -72,14 +72,20 @@ export default function FormWeddingMinimal({
   }, [values]);
 
   const onSubmitHandler = async (data: MinimalWType) => {
-    const body = { templateKey, values: data };
+    const formData = new FormData();
+
+    // Append templateKey
+    formData.append("templateKey", templateKey);
+
+    // Append form values sebagai JSON string
+    formData.append("values", JSON.stringify(data));
 
     await withLoading(async () => {
       const response = await fetch(
         `/api/event${eventId ? `?id=${eventId}` : ""}`,
         {
           method: eventId ? "PUT" : "POST",
-          body: JSON.stringify(body),
+          body: formData,
         },
       );
 
