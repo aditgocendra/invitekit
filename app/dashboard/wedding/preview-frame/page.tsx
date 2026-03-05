@@ -14,7 +14,7 @@ type Props<TValues extends FieldValues> = {
   delayMs?: number;
 };
 
-export function PreviewFrameBridge<TValues extends FieldValues>({
+export default function PreviewFrameBridge<TValues extends FieldValues>({
   form,
   eventId,
   delayMs = 200,
@@ -34,8 +34,14 @@ export function PreviewFrameBridge<TValues extends FieldValues>({
         const latest = latestValuesRef.current;
         if (!latest) return;
 
-        const msg: DraftConfigMessage<TValues> = { type: "DRAFT_CONFIG", payload: latest };
-        iframeRef.current?.contentWindow?.postMessage(msg, window.location.origin);
+        const msg: DraftConfigMessage<TValues> = {
+          type: "DRAFT_CONFIG",
+          payload: latest,
+        };
+        iframeRef.current?.contentWindow?.postMessage(
+          msg,
+          window.location.origin,
+        );
       }, delayMs);
     });
 
@@ -45,5 +51,11 @@ export function PreviewFrameBridge<TValues extends FieldValues>({
     };
   }, [form, delayMs]);
 
-  return <iframe ref={iframeRef} className="w-full h-full" src={`/preview?id=${eventId}`} />;
+  return (
+    <iframe
+      ref={iframeRef}
+      className='w-full h-full'
+      src={`/preview?id=${eventId}`}
+    />
+  );
 }
