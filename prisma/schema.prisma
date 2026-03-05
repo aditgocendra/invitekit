@@ -43,16 +43,31 @@ model Session {
   @@map("sessions")
 }
 
+model Subscription {
+  id       String    @id @default(cuid())
+  userId   String    @unique
+  plan     Plan      @default(FREE)
+  startsAt DateTime  @default(now())
+  endsAt   DateTime?
+  isActive Boolean   @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  email         String?       @unique
+  emailVerified DateTime?     @map("email_verified")
   password      String?
   image         String?
-  role          Role      @default(USER)
+  role          Role          @default(USER)
   accounts      Account[]
   sessions      Session[]
+  subscription  Subscription?
+  events        Event[]
 
   @@map("users")
 }
@@ -79,7 +94,75 @@ model EmailActionToken {
   @@map("email_action_tokens")
 }
 
+model Event {
+  id          String       @id @default(cuid())
+  user        User         @relation(fields: [userId], references: [id])
+  userId      String
+  slug        String       @unique
+  type        EventType
+  status      EventStatus  @default(DRAFT)
+  isPublic    Boolean      @default(false)
+  templateKey String
+  configJson  Json
+  thumb       String?
+  createdAt   DateTime     @default(now())
+  invitations Invitation[]
+
+  @@map("event")
+}
+
+model Invitation {
+  id         String     @id @default(cuid())
+  event      Event      @relation(fields: [eventId], references: [id])
+  name       String
+  eventId    String
+  phone      String?
+  token      String     @unique
+  slug       String     @unique
+  sentAt     DateTime?
+  openedAt   DateTime?
+  sentStatus SentStatus
+  rsvp       Rsvp?
+
+  @@map("invitation")
+}
+
+model Rsvp {
+  id           String     @id @default(cuid())
+  invitation   Invitation @relation(fields: [invitationId], references: [id])
+  invitationId String     @unique
+  isAttendance Boolean
+  message      String?
+  respondedAt  DateTime?
+
+  @@map("rsvp")
+}
+
 enum Role {
   ADMIN
   USER
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum EventType {
+  WEDDING
+  CIRCUMCISION
+}
+
+enum EventStatus {
+  DRAFT
+  ARCHIVED
+  PUBLISHED
+}
+
+enum SentStatus {
+  PENDING
+  FAIL
+  SUCCESS
 }

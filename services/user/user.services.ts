@@ -1,3 +1,4 @@
+import { Plan } from "@/lib/generated/enums";
 import { prisma } from "@/lib/prisma.init";
 import { Role } from "@/types/next-auth";
 
@@ -13,7 +14,13 @@ export const createUser = async (props: CreateUserProps) => {
       name: props.name,
       email: props.email,
       password: props.password,
+      subscription: {
+        create: {
+          plan: Plan.FREE,
+        },
+      },
     },
+    include: { subscription: true },
   });
 
   return r;
@@ -55,5 +62,3 @@ export const updateUser = async (props: UpdateUserProps) => {
   });
   return r;
 };
-
-

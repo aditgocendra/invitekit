@@ -41,6 +41,53 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) translateX(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeSlide {
+    from {
+      opacity: var(--from-opacity, 0);
+      transform: translate(var(--tx, 0px), var(--ty, 0px))
+        scale(var(--sx, 1), var(--sy, 1));
+    }
+    to {
+      opacity: 1;
+      transform: translate(0, 0) scale(1, 1);
+    }
+  }
+
+  @keyframes zoomOutOnce {
+    from {
+      transform: scale(1.2);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  /* Rotate card galery */
+  @keyframes rotate {
+    to {
+      transform: perspective(1000px) rotateX(70deg) rotateZ(360deg);
+    }
+  }
 }
 
 :root {
@@ -131,6 +178,16 @@
   }
 }
 
+.thumbs-enter-0 {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+.thumbs-enter-1 {
+  animation: fadeInUp 1s ease-out forwards;
+}
+.thumbs-enter-2 {
+  animation: fadeInUp 1.5s ease-out forwards;
+}
+
 .font-fredoka {
   font-family: var(--font-fredoka);
 }
@@ -145,4 +202,20 @@
 
 .font-parisienne {
   font-family: var(--font-parisienne);
+}
+
+.font-the-nautigal {
+  font-family: var(--font-the-nautigal);
+}
+
+.font-lobster {
+  font-family: var(--font-lobster);
+}
+
+.font-oswald {
+  font-family: var(--font-oswald);
+}
+
+.font-alexandria {
+  font-family: var(--font-alexandria);
 }
