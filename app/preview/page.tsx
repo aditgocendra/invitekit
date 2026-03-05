@@ -2,14 +2,15 @@ import { getEventById } from "@/services/invitation/event.services";
 import { TEMPLATE_REGISTRY } from "@/templates/registry";
 import type { JsonValue } from "@/types/json";
 import { notFound } from "next/navigation";
-import PreviewClient from "./client-preview/page";
+import ClientPreviewWrapper from "./ClientPreviewWrapper"; // Import client wrapper
 
 type PageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export default async function PreviewPage({ searchParams }: PageProps) {
-  const { id } = await searchParams;
+  const resolvedParams = await searchParams;
+  const { id } = resolvedParams;
 
   if (typeof id !== "string") return notFound();
 
@@ -20,7 +21,7 @@ export default async function PreviewPage({ searchParams }: PageProps) {
   if (!template) return notFound();
 
   return (
-    <PreviewClient
+    <ClientPreviewWrapper
       initialConfig={event.configJson as JsonValue}
       TemplateComponent={template.Component}
     />
