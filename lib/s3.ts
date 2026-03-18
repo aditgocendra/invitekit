@@ -51,7 +51,7 @@ export const setBucketCORS = async ({
 // Generate signed URL for upload
 export const getSignedUrlForUpload = async (
   key: string,
-  contentType: string
+  contentType: string,
 ): Promise<string> => {
   const command = new PutObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME!,
@@ -94,6 +94,57 @@ export const listPrefixs = async ({ bucket }: { bucket: string }) => {
     const prefixes = CommonPrefixes?.map((item) => item.Prefix) || [];
 
     return prefixes;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
+};
+
+export const listPrefixFiles = async ({
+  bucket,
+  prefix,
+}: {
+  bucket: string;
+  prefix: string;
+}) => {
+  try {
+    const files: { name: string; path: string }[] = [];
+
+    // Pagination untuk handle >1000 files
+    let ContinuationToken: string | undefined;
+    let isTruncated = true;
+
+    while (isTruncated) {
+      const command = new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: prefix + "/", // Filter hanya files di folder audio/
+        Delimiter: "/", // Hindari subfolder
+        ContinuationToken,
+        MaxKeys: 1000,
+      });
+
+      const response = await s3Client.send(command);
+
+      // Ambil semua file objects (bukan folder)
+      if (response.Contents) {
+        const audioFiles = response.Contents.filter(
+          (obj) => obj.Key && !obj.Key.endsWith("/"),
+        ) // Exclude folders
+          .map((obj) => ({
+            name: obj.Key!.split("/").pop()!, // Nama file saja
+            path: obj.Key!, // Path lengkap
+            size: obj.Size || 0,
+            lastModified: obj.LastModified,
+          }));
+
+        files.push(...audioFiles);
+      }
+
+      // Pagination
+      isTruncated = !!response.IsTruncated;
+      ContinuationToken = response.NextContinuationToken;
+    }
+
+    return files;
   } catch (error) {
     throw new Error((error as Error).message);
   }
