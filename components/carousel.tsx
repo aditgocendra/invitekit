@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Button } from "./ui/button";
 
 interface CarouselItem {
   img: string | StaticImageData;
@@ -24,17 +23,14 @@ export default function CrossfadeCarousel({
   const startTimeRef = useRef<number>(0);
   const animateRef = useRef<((now: number) => void) | null>(null);
   const [active, setActive] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
 
   // Setup animateRef.current (pure, no self-reference issue)
   useEffect(() => {
     animateRef.current = (now: number) => {
       const timeFraction = (now - startTimeRef.current) / duration!;
       if (timeFraction <= 1) {
-        setProgress(timeFraction * 100);
         frameRef.current = requestAnimationFrame(animateRef.current!);
       } else {
-        setProgress(0);
         setActive((prevActive) => (prevActive + 1) % items.length);
       }
     };
@@ -59,7 +55,6 @@ export default function CrossfadeCarousel({
 
   const handleDotClick = useCallback((index: number) => {
     setActive(index);
-    setProgress(0);
     startTimeRef.current = performance.now(); // Reset timer
     if (animateRef.current) {
       cancelAnimationFrame(frameRef.current);
