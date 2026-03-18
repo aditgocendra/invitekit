@@ -1,8 +1,21 @@
 import Image from "next/image";
 
-export default function CardGaleries() {
-  const cards = Array.from({ length: 8 }, (_, i) => i + 1);
+const DEFAULT_IMAGES = [
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+];
 
+export default function CardGaleries({
+  images = DEFAULT_IMAGES,
+}: {
+  images?: string[];
+}) {
   return (
     <div className='flex items-center justify-center mt-12'>
       <div
@@ -16,7 +29,7 @@ export default function CardGaleries() {
           hover:paused
           max-[992px]:scale-[.7]
         '>
-        {cards.map((i) => (
+        {images.map((v, i) => (
           <div
             key={i}
             className='
@@ -25,7 +38,7 @@ export default function CardGaleries() {
             '
             style={{
               transform: `
-                rotateZ(${(360 / cards.length) * i}deg)
+                rotateZ(${(360 / images.length) * i}deg)
                 rotateX(90deg)
                 translateY(120px)
                 translateZ(280px)
@@ -33,7 +46,7 @@ export default function CardGaleries() {
               `,
             }}>
             <Image
-              src='/assets/templates/premium/wedding/film/cover.webp'
+              src={`https://s3.nevaobjects.id/invitekit-bucket/${v}`}
               alt={`Image ${i + 1}`}
               fill
               className='object-cover rounded-2xl'

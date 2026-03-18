@@ -1,23 +1,49 @@
 import { RefObject } from "react";
 import { CrossfadeCarouselHero } from "./carousel";
 
+const DEFAULT_IMAGES = [
+  {
+    img: "template/wedding/premium/film/cover.webp",
+    title: "Premium Wedding Film Template",
+    alt: "Premium Wedding Film Template",
+  },
+  {
+    img: "template/wedding/premium/film/test2.webp",
+    title: "Premium Wedding Film Template",
+    alt: "Premium Wedding Film Template",
+  },
+  {
+    img: "template/wedding/premium/film/test3.webp",
+    title: "Premium Wedding Film Template",
+    alt: "Premium Wedding Film Template",
+  },
+];
 export default function HeroSection({
   ref,
-  scrollToView,
-  // groomName,
-  // brideName,
-  // parentGroomName,
-  // parentBrideName,
-  // akadDate,
+  stories,
+  guestName,
 }: {
   ref: RefObject<HTMLDivElement | null>;
-  scrollToView: (view: "view1" | "view2" | "view3" | "view4" | "view5") => void;
-  // groomName: string | undefined;
-  // brideName: string | undefined;
-  // parentGroomName: string | undefined;
-  // parentBrideName: string | undefined;
-  // akadDate: string | undefined;
+  stories?: {
+    img: string;
+    title: string;
+    desc: string;
+  }[];
+  guestName?: string;
 }) {
+  const carouselItems: Array<{ img: string; title: string; alt: string }> = [
+    ...DEFAULT_IMAGES,
+  ];
+
+  if (stories && stories.length > 0) {
+    stories.map((val, index) => {
+      carouselItems[index] = {
+        img: val.img,
+        title: val.title,
+        alt: val.desc,
+      };
+    });
+  }
   return (
     <section
       ref={ref}
@@ -26,24 +52,8 @@ export default function HeroSection({
 
       <CrossfadeCarouselHero
         duration={10000}
-        items={[
-          {
-            img: "/assets/templates/premium/wedding/film/cover.webp",
-            alt: "Premium Wedding Film Template",
-            title: "Premium Wedding Film Template",
-          },
-          {
-            img: "/assets/templates/premium/wedding/film/test3.webp",
-            alt: "Premium Wedding Film Template",
-            title: "Premium Wedding Film Template",
-          },
-
-          {
-            img: "/assets/templates/premium/wedding/film/test2.webp",
-            alt: "Premium Wedding Film Template",
-            title: "Premium Wedding Film Template",
-          },
-        ]}
+        items={carouselItems}
+        guestName={guestName}
       />
     </section>
   );
