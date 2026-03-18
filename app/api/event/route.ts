@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
 
   // Validate images
 
-  if (images) {
+  if (images.length > 0) {
     const parsedImages = MultipleImageSchema.safeParse(images);
 
     if (!parsedImages.success) {
