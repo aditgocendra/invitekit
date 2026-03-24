@@ -57,6 +57,6 @@ export const WeddingPremiumFilmFormSchema = z.object({
   giftCard1: GiftCardSchema,
   giftCard2: GiftCardSchema,
   giftCardBg: z.string().optional(),
-  thanksMessage: z.string().min(1).max(256).optional(),
+  thanksMessage: z.string().max(256).optional(),
   thanksImages: z.array(z.string()).optional(),
 });
