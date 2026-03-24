@@ -12,6 +12,7 @@ export type InvitationDTO = {
   id: string;
   name: string;
   phone: string | null;
+  slug: string;
   sentAt: Date | null;
   openedAt: Date | null;
   sentStatus: SentStatusType;
