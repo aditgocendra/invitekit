@@ -33,6 +33,7 @@ export const getInvitationByEventId = async (
         name: true,
         phone: true,
         sentAt: true,
+        slug: true,
         sentStatus: true,
         openedAt: true,
         rsvp: true,
@@ -52,7 +53,13 @@ export const getInvitationByEventId = async (
 export const getInvitationById = async (id: string) => {
   return await prisma.invitation.findUnique({
     where: { id },
-    select: { id: true, event: { select: { userId: true } }, rsvp: true },
+    select: {
+      id: true,
+      slug: true,
+      phone: true,
+      event: { select: { userId: true } },
+      rsvp: true,
+    },
   });
 };
 
