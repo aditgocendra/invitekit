@@ -125,6 +125,19 @@ export default function TableInvitation({ data, totalPages }: TableUserProps) {
     replace(`${pathname}?${params.toString()}`);
   };
 
+  const reInvite = async (id: string) => {
+    await withLoading(async () => {
+      const res = await fetch(`/api/event/invitation/re?invitationId=${id}`, {
+        credentials: "include",
+        method: "POST",
+      });
+
+      if (res.ok) {
+        refresh();
+      }
+    });
+  };
+
   return (
     <div className='flex flex-col gap-4 mt-4'>
       <DialogConfirmation
@@ -330,19 +343,17 @@ export default function TableInvitation({ data, totalPages }: TableUserProps) {
                       <DropdownMenuContent
                         className='text-sm'
                         align='start'>
-                        <DropdownMenuItem
-                        //   disabled={item.status !== "PENDING"}
-                        //   onClick={() =>
-                        //     handleResendInvite(item.id)}
-                        >
+                        <DropdownMenuItem onClick={() => reInvite(item.id)}>
                           <RefreshCcw className='mr-1' /> Resend Invitation
                         </DropdownMenuItem>
 
                         <DropdownMenuItem
-                        //   disabled={item.status !== "PENDING"}
-                        //   onClick={() =>
-                        //     handleResendInvite(item.id)}
-                        >
+                          onClick={() => {
+                            const url = `${process.env.NEXT_PUBLIC_APP_URL}/i/${item.slug}`;
+                            navigator.clipboard.writeText(url).then(() => {
+                              toast("Link copied to clipboard");
+                            });
+                          }}>
                           <Link className='mr-1' /> Copy Link
                         </DropdownMenuItem>
 
