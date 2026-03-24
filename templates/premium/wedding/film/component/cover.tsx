@@ -3,15 +3,15 @@ import { CrossfadeCarouselCover } from "./carousel";
 
 const DEFAULT_IMAGES = [
   {
-    img: "/assets/templates/premium/wedding/film/cover.webp",
+    img: "template/wedding/premium/film/cover.webp",
     alt: "Premium Wedding Film Template",
   },
   {
-    img: "/assets/templates/premium/wedding/film/test2.webp",
+    img: "template/wedding/premium/film/test2.webp",
     alt: "Premium Wedding Film Template",
   },
   {
-    img: "/assets/templates/premium/wedding/film/test3.webp",
+    img: "template/wedding/premium/film/test3.webp",
     alt: "Premium Wedding Film Template",
   },
 ];
@@ -19,18 +19,32 @@ const DEFAULT_IMAGES = [
 export default function Cover({
   groomName,
   brideName,
+  imageUrls,
   onOpen,
 }: {
   groomName?: string;
   brideName?: string;
-  guestName?: string;
+  imageUrls?: string[];
   onOpen: () => void;
 }) {
+  const carouselItems: Array<{ img: string; alt: string }> = [
+    ...DEFAULT_IMAGES,
+  ];
+
+  if (imageUrls && imageUrls.length > 0) {
+    imageUrls.map((url, index) => {
+      carouselItems[index] = {
+        img: url,
+        alt: "Custom Gallery Image",
+      };
+    });
+  }
+
   return (
     <div className='relative min-h-screen w-full overflow-hidden '>
       <CrossfadeCarouselCover
         duration={10000}
-        items={DEFAULT_IMAGES}
+        items={carouselItems}
       />
       <div className='absolute inset-0 bg-black opacity-100 animate-[fadeOut_1s_ease-out_0.5s_forwards] z-30' />
       {/* overlay full di atas gambar */}

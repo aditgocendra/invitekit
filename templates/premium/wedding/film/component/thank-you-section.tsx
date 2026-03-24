@@ -6,9 +6,11 @@ const DEFAULT_MESSAGE =
 
 export default function ThanksSection({
   ref,
+  images,
   message,
 }: {
   message?: string;
+  images?: string[];
   ref: RefObject<HTMLDivElement | null>;
 }) {
   return (
@@ -27,7 +29,7 @@ export default function ThanksSection({
             {message || DEFAULT_MESSAGE}
           </p>
 
-          <CardGaleries />
+          <CardGaleries images={images} />
 
           <span className='font-oswald text-3xl sm:text-6xl text-white'>
             Groom & Bride

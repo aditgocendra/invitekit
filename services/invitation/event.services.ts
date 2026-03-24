@@ -31,7 +31,7 @@ interface UpdateInvitationEventProps {
   id: string;
   thumb?: string;
   configJson?: {
-    [key: string]: string | boolean | number | Date;
+    [key: string]: string | boolean | number | Date | string[];
   };
 }
 

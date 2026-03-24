@@ -4,23 +4,32 @@ import Image from "next/image";
 import { RefObject, useEffect, useRef, useState } from "react";
 
 const DEFAULT_IMAGES = [
-  "template/wedding/basic/rsvp-1.webp",
-  "template/wedding/basic/rsvp-2.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
+  "template/wedding/premium/film/cover.webp",
 ];
 
 export default function RsvpSection({
   ref,
-  images,
+  imageUrls,
   invitationId,
   scrollToView,
 }: {
   ref: RefObject<HTMLDivElement | null>;
   scrollToView: (view: "view1" | "view2" | "view3" | "view4" | "view5") => void;
   invitationId?: string;
-  images?: string[];
+  imageUrls?: string[];
 }) {
-  const image1 = images ? images[0] : DEFAULT_IMAGES[0];
-  const image2 = images && images.length > 1 ? images[1] : DEFAULT_IMAGES[1];
+  // const image1 = images ? images[0] : DEFAULT_IMAGES[0];
+  // const image2 = images && images.length > 1 ? images[1] : DEFAULT_IMAGES[1];
+
+  const images: string[] = [...DEFAULT_IMAGES];
+
+  if (imageUrls && imageUrls.length > 0) {
+    imageUrls.map((url, index) => {
+      images[index] = url;
+    });
+  }
 
   const cardRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -59,11 +68,7 @@ export default function RsvpSection({
                 ${isVisible ? "opacity-100" : "opacity-0"}
                 transform -translate-y-5 `}>
               <Image
-                src={
-                  image1.startsWith("blob:")
-                    ? image1
-                    : `https://s3.nevaobjects.id/invitekit-bucket/${image1}`
-                }
+                src={`https://s3.nevaobjects.id/invitekit-bucket/${images[0]}`}
                 width={200}
                 height={200}
                 className='object-cover rounded-sm'
@@ -78,11 +83,7 @@ export default function RsvpSection({
                 ${isVisible ? "delay-700" : ""}
                 transform -translate-y-5 `}>
               <Image
-                src={
-                  image2.startsWith("blob:")
-                    ? image2
-                    : `https://s3.nevaobjects.id/invitekit-bucket/${image2}`
-                }
+                src={`https://s3.nevaobjects.id/invitekit-bucket/${images[1]}`}
                 width={200}
                 height={200}
                 className='object-cover rounded-sm'
@@ -101,11 +102,7 @@ export default function RsvpSection({
                 transform -translate-y-5 
               `}>
               <Image
-                src={
-                  image2.startsWith("blob:")
-                    ? image2
-                    : `https://s3.nevaobjects.id/invitekit-bucket/${image2}`
-                }
+                src={`https://s3.nevaobjects.id/invitekit-bucket/${images[2]}`}
                 width={200}
                 height={200}
                 className='object-cover rounded-sm'

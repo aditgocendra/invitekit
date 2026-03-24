@@ -2,13 +2,8 @@
 
 import { useRef, useState } from "react";
 import { JsonValue } from "@/types/json";
-// import Cover from "../../../basic/wedding/minimal./../../premium/wedding/film/component/cover";
-// import HeroSection from "../../../basic/wedding/minimal./../../premium/wedding/film/component/hero-section";
-// import SessionSection from "../../../basic/wedding/minimal./../../premium/wedding/film/component/session-section";
-// import RsvpSection from "../../../basic/wedding/minimal./../../premium/wedding/film/component/rsvp-section";
-// import ThanksSection from "../../../basic/wedding/minimal./../../premium/wedding/film/component/thank-you-section";
 
-import { WeddingBasicMinimalFormSchema } from "@/validation/template.validation";
+import { WeddingPremiumFilmFormSchema } from "@/validation/template.validation";
 
 import Cover from "./component/cover";
 import HeroSection from "./component/hero-section";
@@ -16,12 +11,12 @@ import SessionSection from "./component/session-section";
 import RsvpSection from "./component/rsvp-section";
 import GiftSection from "./component/gift-section";
 import ThanksSection from "./component/thank-you-section";
+import AudioPlayer from "@/components/audio-player";
+import z from "zod";
 
-// const DEFAULT_CONFIG = {
-//   coverImage: "/assets/templates/premium/wedding/film/cover.webp",
-// };
+const DEFAULT_AUDIO = "audio/pb_lobby.mp3";
 
-// type BasicWeddingMinimalType = z.infer<typeof WeddingBasicMinimalFormSchema>;
+type PremiumWeddingFilmType = z.infer<typeof WeddingPremiumFilmFormSchema>;
 
 export default function PremiumWeddingFilmTemplate({
   invitationId,
@@ -32,14 +27,14 @@ export default function PremiumWeddingFilmTemplate({
   guestName?: string;
   config: JsonValue;
 }) {
-  const parsed = WeddingBasicMinimalFormSchema.safeParse(config);
+  const parsed = WeddingPremiumFilmFormSchema.safeParse(config);
 
   // ✅ Fallback ke object kosong jika config invalid/undefined
-  // const values: Partial<BasicWeddingMinimalType> = parsed.success
-  //   ? parsed.data
-  //   : config && typeof config === "object" && !Array.isArray(config)
-  //     ? (config as Partial<BasicWeddingMinimalType>)
-  //     : {}; // ✅ default ke {} jika config null/undefined/invalid
+  const values: Partial<PremiumWeddingFilmType> = parsed.success
+    ? parsed.data
+    : config && typeof config === "object" && !Array.isArray(config)
+      ? (config as Partial<PremiumWeddingFilmType>)
+      : {}; // ✅ default ke {} jika config null/undefined/invalid
 
   const [isScrollEnabled, setIsScrollEnabled] = useState(false);
 
@@ -93,41 +88,88 @@ export default function PremiumWeddingFilmTemplate({
     }
   };
 
+  // background mp3 music control
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showAudio, setShowAudio] = useState(false);
+
+  const currentAudioSrc = values.audioBackground
+    ? `https://s3.nevaobjects.id/invitekit-bucket/${values.audioBackground}`
+    : `https://s3.nevaobjects.id/invitekit-bucket/${DEFAULT_AUDIO}`;
+
+  const tooglePlayPause = () => {
+    const audio = audioRef.current;
+
+    if (!audio) return;
+
+    if (!isPlaying) {
+      audio.src = currentAudioSrc;
+      audio.load();
+      audio.play();
+      setIsPlaying(true);
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
+
   const onOpen = () => {
+    tooglePlayPause();
     scrollToView("view2");
-    console.log("open");
+    setShowAudio(true);
   };
 
   return (
-    <div className='flex flex-col items-center transition-all duration-300 min-h-0 fixed inset-0 overflow-y-auto bg-[#0E1424]'>
-      <Cover
-        // groomName={values.groomName}
-        // brideName={values.brideName}
-        // guestName={guestName}
-        onOpen={onOpen}
-      />
+    <div className='relative min-h-screen bg-[#0E1424] overflow-hidden'>
+      <div className='flex flex-col items-center transition-all duration-300 min-h-screen overflow-y-auto'>
+        <Cover
+          onOpen={onOpen}
+          groomName={values.groomName}
+          brideName={values.brideName}
+          imageUrls={values.coverImages}
+        />
+        <HeroSection
+          ref={view2Ref}
+          stories={values.stories}
+          guestName={guestName}
+        />
+        <SessionSection
+          ref={view3Ref}
+          scrollToView={scrollToView}
+          akad={values.akad}
+          reception={values.reception}
+        />
+        <RsvpSection
+          ref={view4Ref}
+          scrollToView={scrollToView}
+          imageUrls={values.rsvpImages}
+          invitationId={invitationId}
+        />
+        <GiftSection
+          ref={view5Ref}
+          scrollToView={scrollToView}
+          giftCard1={values.giftCard1}
+          giftCard2={values.giftCard2}
+          giftCardBg={values.giftCardBg}
+        />
+        <ThanksSection
+          ref={view6Ref}
+          images={values.thanksImages}
+          message={values.thanksMessage}
+        />
+      </div>
 
-      <HeroSection
-        ref={view2Ref}
-        scrollToView={scrollToView}
-      />
-
-      <SessionSection
-        ref={view3Ref}
-        scrollToView={scrollToView}
-      />
-
-      <RsvpSection
-        ref={view4Ref}
-        scrollToView={scrollToView}
-      />
-
-      <GiftSection
-        ref={view5Ref}
-        scrollToView={scrollToView}
-      />
-
-      <ThanksSection ref={view6Ref} />
+      {/* AudioPlayer FIXED pojok kanan bawah */}
+      {showAudio && (
+        <div className='fixed bottom-8 right-8 z-50'>
+          <AudioPlayer
+            src={currentAudioSrc}
+            audioRef={audioRef}
+            onPlayPause={tooglePlayPause}
+            isPlaying={isPlaying}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,48 +1,62 @@
-import { DialogRsvp } from "@/components/dialog/dialog-rsvp";
 import { Button } from "@/components/ui/button";
 import { ChevronsDown, Link } from "lucide-react";
 import Image from "next/image";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject } from "react";
 
-const DEFAULT_IMAGES = [
-  "template/wedding/basic/rsvp-1.webp",
-  "template/wedding/basic/rsvp-2.webp",
-];
+// const DEFAULT_IMAGES = [
+//   "template/wedding/basic/rsvp-1.webp",
+//   "template/wedding/basic/rsvp-2.webp",
+// ];
 
 export default function GiftSection({
   ref,
-  images,
-  invitationId,
   scrollToView,
+  giftCard1 = {
+    bankName: "Seabank",
+    number: 431212321232,
+    holder: "John Doe",
+  },
+  giftCard2 = {
+    bankName: "BCA",
+    number: 123456723456,
+    holder: "Doe John",
+  },
+  giftCardBg = "template/wedding/premium/film/cover.webp",
 }: {
   ref: RefObject<HTMLDivElement | null>;
   scrollToView: (view: "view1" | "view2" | "view3" | "view4" | "view5") => void;
-  invitationId?: string;
-  images?: string[];
+  giftCard1?: {
+    bankName: string;
+    number: number;
+    holder: string;
+  };
+  giftCard2?: {
+    bankName: string;
+    number: number;
+    holder: string;
+  };
+  giftCardBg?: string;
 }) {
-  const image1 = images ? images[0] : DEFAULT_IMAGES[0];
-  const image2 = images && images.length > 1 ? images[1] : DEFAULT_IMAGES[1];
+  // const cardRef = useRef<HTMLDivElement>(null);
+  // const [isVisible, setIsVisible] = useState(false);
 
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  // useEffect(() => {
+  //   const el = cardRef.current;
+  //   if (!el) return;
 
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
+  //   const observer = new IntersectionObserver(
+  //     ([entry]) => {
+  //       if (entry.isIntersecting) {
+  //         setIsVisible(true);
+  //         observer.disconnect(); // hanya sekali
+  //       }
+  //     },
+  //     { threshold: 0.1 },
+  //   );
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect(); // hanya sekali
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  //   observer.observe(el);
+  //   return () => observer.disconnect();
+  // }, []);
 
   const formatCardNumber = (input: string | number, minLength = 10): string => {
     const numStr = String(input).replace(/\D/g, "");
@@ -65,7 +79,7 @@ export default function GiftSection({
 
         <div className='absolute inset-0 grayscale-25'>
           <Image
-            src='/assets/templates/premium/wedding/film/cover.webp'
+            src={`https://s3.nevaobjects.id/invitekit-bucket/${giftCardBg}`}
             width={1920}
             height={1080}
             className='h-screen w-full object-cover '
@@ -91,9 +105,9 @@ export default function GiftSection({
               <div className='absolute inset-0 text-white p-6 sm:p-8'>
                 <div className='flex flex-col justify-between h-full'>
                   <div className='flex flex-col gap-2.5'>
-                    <span className='font-semibold'>Seabank</span>
+                    <span className='font-semibold'>{giftCard1.bankName}</span>
                     <span className='flex gap-4 justify-between font-alexandria text-2xl sm:text-3xl'>
-                      {formatCardNumber(432156723456)}
+                      {formatCardNumber(giftCard1.number)}
                       <Button
                         variant={"secondary"}
                         size={"icon"}>
@@ -107,7 +121,7 @@ export default function GiftSection({
                       CARDHOLDER
                     </span>
                     <span className='text-xs sm:text-sm font-semibold'>
-                      John Doe
+                      {giftCard1.holder}
                     </span>
                   </div>
                 </div>
@@ -119,9 +133,9 @@ export default function GiftSection({
               <div className='absolute inset-0 text-white p-6 sm:p-8'>
                 <div className='flex flex-col justify-between h-full'>
                   <div className='flex flex-col gap-2.5'>
-                    <span className='font-semibold'>BCA</span>
+                    <span className='font-semibold'>{giftCard2.bankName}</span>
                     <span className='flex gap-4 justify-between font-alexandria text-2xl sm:text-3xl'>
-                      {formatCardNumber(123456723456)}
+                      {formatCardNumber(giftCard2.number)}
                       <Button
                         variant={"secondary"}
                         size={"icon"}>
@@ -134,7 +148,9 @@ export default function GiftSection({
                     <span className='text-xs sm:text-sm tracking-widest'>
                       CARDHOLDER
                     </span>
-                    <span className='text-xs sm:text-sm'>Doe John</span>
+                    <span className='text-xs sm:text-sm'>
+                      {giftCard2.holder}
+                    </span>
                   </div>
                 </div>
               </div>
