@@ -26,16 +26,6 @@ export default async function RSVP({ searchParams }: PageProps) {
 
   return (
     <>
-      {/* <div className='flex justify-between items-center mt-2 mx-1'>
-        <h1 className='text-2xl font-bold'>Invitation</h1>
-
-        <Link
-          href='/dashboard/wedding/create'
-          className={buttonVariants({ size: "sm" })}>
-          Create Invitation
-        </Link>
-      </div> */}
-
       <TableInvitation
         data={invitations}
         totalPages={Math.ceil(count / limitPerPage)}

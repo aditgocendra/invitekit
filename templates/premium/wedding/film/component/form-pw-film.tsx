@@ -197,75 +197,37 @@ export default function FormWeddingPremiumFilm({
       )}
 
       {/* Audio Background */}
-      <div className='flex flex-col'>
-        <DialogAudioSelect
-          onAudioSelect={(audio) => {
-            form.setValue("audioBackground", audio);
-          }}
-        />
-      </div>
+      {eventId && (
+        <div className='flex flex-col'>
+          <DialogAudioSelect
+            onAudioSelect={(audio) => {
+              form.setValue("audioBackground", audio);
+            }}
+          />
+        </div>
+      )}
 
       {/* Section */}
       <div className='flex flex-col gap-4'>
         <span className='text-sm font-semibold'>Section</span>
 
         {/* Cover Images */}
-        <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-          <div className='flex flex-col'>
-            <span className='text-sm font-semibold'>Cover</span>
-            <span className='text-xs'>(1920 x 1080 Recommended)</span>
-          </div>
+        {eventId && (
+          <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-semibold'>Cover</span>
+              <span className='text-xs'>(1920 x 1080 Recommended)</span>
+            </div>
 
-          {coverImages.length > 0 &&
-            coverImages.map((image, index) => (
-              <div
-                key={index}
-                className='relative w-full h-28 rounded-md border overflow-hidden'>
-                <Image
-                  src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
-                  width={120}
-                  height={80}
-                  className='object-cover w-full h-full rounded-md'
-                  alt='asdasd'
-                />
-
-                <Button
-                  variant={"destructive"}
-                  className='absolute top-2 right-2'
-                  type='button'
-                  size={"icon"}
-                  onClick={() => onRemoveCoverImage(index)}>
-                  <TrashIcon />
-                </Button>
-              </div>
-            ))}
-          <DialogGallery
-            activeState='images'
-            eventId={eventId || ""}
-            images={defaultValues?.gallery || []}
-            onImageSelect={(images: string[]) => {
-              const limitedImages = images.slice(0, 3);
-              setCoverImages(limitedImages);
-            }}
-          />
-        </div>
-
-        {/* Hero Images */}
-        <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-          <div className='flex flex-col'>
-            <span className='text-sm font-semibold'>Heroes</span>
-            <span className='text-xs'>(1920 x 1080 Recommended)</span>
-          </div>
-
-          {values.stories &&
-            values.stories.map((val, index) => (
-              <div
-                key={index}
-                className='flex flex-col gap-2.5'>
-                <div className='relative w-full h-28 rounded-md border overflow-hidden'>
+            {coverImages.length > 0 &&
+              coverImages.map((image, index) => (
+                <div
+                  key={index}
+                  className='relative w-full h-28 rounded-md border overflow-hidden'>
                   <Image
-                    src={`https://s3.nevaobjects.id/invitekit-bucket/${val.img}`}
-                    fill
+                    src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
+                    width={120}
+                    height={80}
                     className='object-cover w-full h-full rounded-md'
                     alt='asdasd'
                   />
@@ -275,57 +237,101 @@ export default function FormWeddingPremiumFilm({
                     className='absolute top-2 right-2'
                     type='button'
                     size={"icon"}
-                    onClick={() => {
-                      const currentStories = (values.stories || []) as Array<{
-                        img: string;
-                        title: string;
-                        desc: string;
-                      }>;
-                      const newStories = currentStories.filter(
-                        (_, i) => i !== index,
-                      );
-
-                      form.setValue("stories", newStories, {
-                        shouldDirty: true,
-                      });
-                    }}>
+                    onClick={() => onRemoveCoverImage(index)}>
                     <TrashIcon />
                   </Button>
                 </div>
+              ))}
+            <DialogGallery
+              activeState='images'
+              eventId={eventId || ""}
+              images={defaultValues?.gallery || []}
+              onImageSelect={(images: string[]) => {
+                const limitedImages = images.slice(0, 3);
+                setCoverImages(limitedImages);
+              }}
+            />
+          </div>
+        )}
 
-                <FieldInput
-                  label='Title'
-                  placeholder='Title'
-                  {...form.register(`stories.${index}.title`)}
-                />
+        {/* Hero Images */}
+        {eventId && (
+          <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-semibold'>Heroes</span>
+              <span className='text-xs'>(1920 x 1080 Recommended)</span>
+            </div>
 
-                <FieldTextArea
-                  label='Description'
-                  placeholder='Description'
-                  {...form.register(`stories.${index}.desc`)}
-                />
-              </div>
-            ))}
+            {values.stories &&
+              values.stories.map((val, index) => (
+                <div
+                  key={index}
+                  className='flex flex-col gap-2.5'>
+                  <div className='relative w-full h-28 rounded-md border overflow-hidden'>
+                    <Image
+                      src={`https://s3.nevaobjects.id/invitekit-bucket/${val.img}`}
+                      fill
+                      className='object-cover w-full h-full rounded-md'
+                      alt='asdasd'
+                    />
 
-          <DialogGallery
-            activeState='images'
-            eventId={eventId || ""}
-            images={defaultValues?.gallery || []}
-            onImageSelect={(images: string[]) => {
-              images.map((image, index) => {
-                form.setValue(`stories.${index}.img`, image, {
-                  shouldDirty: true,
+                    <Button
+                      variant={"destructive"}
+                      className='absolute top-2 right-2'
+                      type='button'
+                      size={"icon"}
+                      onClick={() => {
+                        const currentStories = (values.stories || []) as Array<{
+                          img: string;
+                          title: string;
+                          desc: string;
+                        }>;
+                        const newStories = currentStories.filter(
+                          (_, i) => i !== index,
+                        );
+
+                        form.setValue("stories", newStories, {
+                          shouldDirty: true,
+                        });
+                      }}>
+                      <TrashIcon />
+                    </Button>
+                  </div>
+
+                  <FieldInput
+                    label='Title'
+                    placeholder='Title'
+                    {...form.register(`stories.${index}.title`)}
+                  />
+
+                  <FieldTextArea
+                    label='Description'
+                    placeholder='Description'
+                    {...form.register(`stories.${index}.desc`)}
+                  />
+                </div>
+              ))}
+
+            <DialogGallery
+              activeState='images'
+              eventId={eventId || ""}
+              images={defaultValues?.gallery || []}
+              onImageSelect={(images: string[]) => {
+                images.map((image, index) => {
+                  form.setValue(`stories.${index}.img`, image, {
+                    shouldDirty: true,
+                  });
+                  form.setValue(`stories.${index}.title`, "This Title", {
+                    shouldDirty: true,
+                  });
+                  form.setValue(`stories.${index}.desc`, "This Description", {
+                    shouldDirty: true,
+                  });
                 });
-                form.setValue(`stories.${index}.title`, "This Title", {
-                  shouldDirty: true,
-                });
-                form.setValue(`stories.${index}.desc`, "This Description", {
-                  shouldDirty: true,
-                });
-              });
-            }}
-          />
-        </div>
+              }}
+            />
+          </div>
+        )}
 
         {/* Session */}
         <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
@@ -341,29 +347,31 @@ export default function FormWeddingPremiumFilm({
               label='Akad Time'
             />
 
-            <div className='flex flex-col gap-2'>
-              <span className='text-sm font-semibold'>Background Image</span>
-              {form.getValues("akad.image") ? (
-                <Image
-                  src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
-                    "akad.image",
-                  )}`}
-                  width={120}
-                  height={80}
-                  className='object-cover w-full h-full rounded-md'
-                  alt='asdasd'
-                />
-              ) : (
-                <DialogGallery
-                  activeState='images'
-                  eventId={eventId || ""}
-                  images={defaultValues?.gallery || []}
-                  onImageSelect={(images: string[]) => {
-                    form.setValue("akad.image", images[0]);
-                  }}
-                />
-              )}
-            </div>
+            {eventId && (
+              <div className='flex flex-col gap-2'>
+                <span className='text-sm font-semibold'>Background Image</span>
+                {form.getValues("akad.image") ? (
+                  <Image
+                    src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
+                      "akad.image",
+                    )}`}
+                    width={120}
+                    height={80}
+                    className='object-cover w-full h-full rounded-md'
+                    alt='asdasd'
+                  />
+                ) : (
+                  <DialogGallery
+                    activeState='images'
+                    eventId={eventId || ""}
+                    images={defaultValues?.gallery || []}
+                    onImageSelect={(images: string[]) => {
+                      form.setValue("akad.image", images[0]);
+                    }}
+                  />
+                )}
+              </div>
+            )}
 
             <DialogPickerLocation
               onLocationSelect={handleAkadLocationSelect}
@@ -388,34 +396,37 @@ export default function FormWeddingPremiumFilm({
 
           {/* RECEPTION */}
           <div className='flex flex-col gap-4 border rounded-lg p-2.5'>
-            <div className='flex flex-col gap-2'>
-              <CalendarTime
-                control={form.control}
-                name='reception.time'
-                label='Reception Time'
-              />
-              <span className='text-sm font-semibold'>Background Image</span>
-              {form.getValues("reception.image") ? (
-                <Image
-                  src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
-                    "reception.image",
-                  )}`}
-                  width={120}
-                  height={80}
-                  className='object-cover w-full h-full rounded-md'
-                  alt='asdasd'
-                />
-              ) : (
-                <DialogGallery
-                  activeState='images'
-                  eventId={eventId || ""}
-                  images={defaultValues?.gallery || []}
-                  onImageSelect={(images: string[]) => {
-                    form.setValue("reception.image", images[0]);
-                  }}
-                />
-              )}
-            </div>
+            <CalendarTime
+              control={form.control}
+              name='reception.time'
+              label='Reception Time'
+            />
+
+            {eventId && (
+              <div className='flex flex-col gap-2'>
+                <span className='text-sm font-semibold'>Background Image</span>
+                {form.getValues("reception.image") ? (
+                  <Image
+                    src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
+                      "reception.image",
+                    )}`}
+                    width={120}
+                    height={80}
+                    className='object-cover w-full h-full rounded-md'
+                    alt='asdasd'
+                  />
+                ) : (
+                  <DialogGallery
+                    activeState='images'
+                    eventId={eventId || ""}
+                    images={defaultValues?.gallery || []}
+                    onImageSelect={(images: string[]) => {
+                      form.setValue("reception.image", images[0]);
+                    }}
+                  />
+                )}
+              </div>
+            )}
 
             <DialogPickerLocation
               onLocationSelect={handleReceptionLocationSelect}
@@ -440,181 +451,190 @@ export default function FormWeddingPremiumFilm({
         </div>
 
         {/* RSVP */}
-        <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-          <div className='flex flex-col'>
-            <span className='text-sm font-semibold'>Rsvp Images</span>
-            <span className='text-xs'>(Ratio 1:1 Recommended)</span>
-          </div>
+        {eventId && (
+          <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-semibold'>Rsvp Images</span>
+              <span className='text-xs'>(Ratio 1:1 Recommended)</span>
+            </div>
 
-          <div className='flex gap-2.5 flex-wrap'>
-            {rsvpImages.length > 0 &&
-              rsvpImages.map((image, index) => (
-                <div
-                  key={index}
-                  className='relative w-24 h-24 aspect-square rounded-md border overflow-hidden'>
-                  <Image
-                    src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
-                    width={96}
-                    height={96}
-                    className='object-cover w-full h-full rounded-md'
-                    alt='RSVP Image'
-                  />
+            <div className='flex gap-2.5 flex-wrap'>
+              {rsvpImages.length > 0 &&
+                rsvpImages.map((image, index) => (
+                  <div
+                    key={index}
+                    className='relative w-24 h-24 aspect-square rounded-md border overflow-hidden'>
+                    <Image
+                      src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
+                      width={96}
+                      height={96}
+                      className='object-cover w-full h-full rounded-md'
+                      alt='RSVP Image'
+                    />
 
-                  <Button
-                    variant={"destructive"}
-                    className='absolute top-2 right-2'
-                    type='button'
-                    size={"icon"}
-                    onClick={() => onRemoveRsvpImage(index)}>
-                    <TrashIcon />
-                  </Button>
-                </div>
-              ))}
+                    <Button
+                      variant={"destructive"}
+                      className='absolute top-2 right-2'
+                      type='button'
+                      size={"icon"}
+                      onClick={() => onRemoveRsvpImage(index)}>
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                ))}
+            </div>
+            <DialogGallery
+              activeState='images'
+              eventId={eventId || ""}
+              images={defaultValues?.gallery || []}
+              onImageSelect={(images: string[]) => {
+                const limitedImages = images.slice(0, 3);
+                setRsvpImages(limitedImages);
+              }}
+            />
           </div>
-          <DialogGallery
-            activeState='images'
-            eventId={eventId || ""}
-            images={defaultValues?.gallery || []}
-            onImageSelect={(images: string[]) => {
-              const limitedImages = images.slice(0, 3);
-              setRsvpImages(limitedImages);
-            }}
-          />
-        </div>
+        )}
 
         {/* Gift Card */}
-        <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-          <div className='flex flex-col'>
-            <span className='text-sm font-semibold'>Gift Cards</span>
-          </div>
-
-          <div className='flex flex-col gap-2'>
-            <span className='text-sm font-semibold'>Background Section</span>
-            {form.getValues("giftCardBg") ? (
-              <Image
-                src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
-                  "giftCardBg",
-                )}`}
-                width={120}
-                height={80}
-                className='object-cover w-full h-full rounded-md'
-                alt='asdasd'
-              />
-            ) : (
-              <DialogGallery
-                activeState='images'
-                eventId={eventId || ""}
-                images={defaultValues?.gallery || []}
-                onImageSelect={(images: string[]) => {
-                  form.setValue("giftCardBg", images[0]);
-                }}
-              />
-            )}
-          </div>
-
-          {/* Gift Card 1 */}
+        {eventId && (
           <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-            <span className='text-sm font-semibold'>Gift Card 1</span>
-            <FieldInput
-              label='Bank Name'
-              placeholder='Ex : Seabank'
-              {...form.register("giftCard1.bankName")}
-              errorMessage={form.formState.errors.giftCard1?.bankName?.message}
-            />
+            <div className='flex flex-col'>
+              <span className='text-sm font-semibold'>Gift Cards</span>
+            </div>
 
-            <FieldInput
-              label='Card Number'
-              placeholder='Ex : 4231xxxxxxxxxxxx'
-              type='number'
-              {...form.register("giftCard1.number")}
-              errorMessage={form.formState.errors.giftCard1?.number?.message}
-            />
+            <div className='flex flex-col gap-2'>
+              <span className='text-sm font-semibold'>Background Section</span>
+              {form.getValues("giftCardBg") ? (
+                <Image
+                  src={`https://s3.nevaobjects.id/invitekit-bucket/${form.getValues(
+                    "giftCardBg",
+                  )}`}
+                  width={120}
+                  height={80}
+                  className='object-cover w-full h-full rounded-md'
+                  alt='asdasd'
+                />
+              ) : (
+                <DialogGallery
+                  activeState='images'
+                  eventId={eventId || ""}
+                  images={defaultValues?.gallery || []}
+                  onImageSelect={(images: string[]) => {
+                    form.setValue("giftCardBg", images[0]);
+                  }}
+                />
+              )}
+            </div>
 
-            <FieldInput
-              label='Holder Name'
-              placeholder='Ex : Yono'
-              {...form.register("giftCard1.holder")}
-              errorMessage={form.formState.errors.giftCard1?.holder?.message}
-            />
+            {/* Gift Card 1 */}
+            <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+              <span className='text-sm font-semibold'>Gift Card 1</span>
+              <FieldInput
+                label='Bank Name'
+                placeholder='Ex : Seabank'
+                {...form.register("giftCard1.bankName")}
+                errorMessage={
+                  form.formState.errors.giftCard1?.bankName?.message
+                }
+              />
+
+              <FieldInput
+                label='Card Number'
+                placeholder='Ex : 4231xxxxxxxxxxxx'
+                type='number'
+                {...form.register("giftCard1.number")}
+                errorMessage={form.formState.errors.giftCard1?.number?.message}
+              />
+
+              <FieldInput
+                label='Holder Name'
+                placeholder='Ex : Yono'
+                {...form.register("giftCard1.holder")}
+                errorMessage={form.formState.errors.giftCard1?.holder?.message}
+              />
+            </div>
+
+            {/* Gift Card 2 */}
+            <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+              <span className='text-sm font-semibold'>Gift Card 2</span>
+              <FieldInput
+                label='Bank Name'
+                placeholder='Ex : Seabank'
+                {...form.register("giftCard2.bankName")}
+                errorMessage={
+                  form.formState.errors.giftCard2?.bankName?.message
+                }
+              />
+
+              <FieldInput
+                label='Card Number'
+                placeholder='Ex : 4231xxxxxxxxxxxx'
+                type='number'
+                {...form.register("giftCard2.number")}
+                errorMessage={form.formState.errors.giftCard2?.number?.message}
+              />
+
+              <FieldInput
+                label='Holder Name'
+                placeholder='Ex : Yono'
+                {...form.register("giftCard2.holder")}
+                errorMessage={form.formState.errors.giftCard2?.holder?.message}
+              />
+            </div>
           </div>
-
-          {/* Gift Card 2 */}
-          <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-            <span className='text-sm font-semibold'>Gift Card 2</span>
-            <FieldInput
-              label='Bank Name'
-              placeholder='Ex : Seabank'
-              {...form.register("giftCard2.bankName")}
-              errorMessage={form.formState.errors.giftCard2?.bankName?.message}
-            />
-
-            <FieldInput
-              label='Card Number'
-              placeholder='Ex : 4231xxxxxxxxxxxx'
-              type='number'
-              {...form.register("giftCard2.number")}
-              errorMessage={form.formState.errors.giftCard2?.number?.message}
-            />
-
-            <FieldInput
-              label='Holder Name'
-              placeholder='Ex : Yono'
-              {...form.register("giftCard2.holder")}
-              errorMessage={form.formState.errors.giftCard2?.holder?.message}
-            />
-          </div>
-        </div>
+        )}
 
         {/* Thanks Section */}
+        {eventId && (
+          <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-semibold'>Thanks Section</span>
+              <span className='text-xs'>(Ratio 1:1 Recommended)</span>
+            </div>
 
-        <div className='flex flex-col gap-2.5 border rounded-lg p-2.5'>
-          <div className='flex flex-col'>
-            <span className='text-sm font-semibold'>Thanks Section</span>
-            <span className='text-xs'>(Ratio 1:1 Recommended)</span>
+            <FieldTextArea
+              label='Thanks Message'
+              placeholder='Thanks message here....'
+              errorMessage={form.formState.errors.thanksMessage?.message}
+              {...form.register("thanksMessage")}
+            />
+
+            <div className='flex gap-2.5 flex-wrap'>
+              {thanksImages.length > 0 &&
+                thanksImages.map((image, index) => (
+                  <div
+                    key={index}
+                    className='relative w-24 h-24 aspect-square rounded-md border overflow-hidden'>
+                    <Image
+                      src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
+                      width={96}
+                      height={96}
+                      className='object-cover w-full h-full rounded-md'
+                      alt='Thanks Image'
+                    />
+
+                    <Button
+                      variant={"destructive"}
+                      className='absolute top-2 right-2'
+                      type='button'
+                      size={"icon"}
+                      onClick={() => onRemoveThanksImage(index)}>
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                ))}
+            </div>
+            <DialogGallery
+              activeState='images'
+              eventId={eventId || ""}
+              images={defaultValues?.gallery || []}
+              onImageSelect={(images: string[]) => {
+                const limitedImages = images.slice(0, 8);
+                setThanksImages(limitedImages);
+              }}
+            />
           </div>
-
-          <FieldTextArea
-            label='Thanks Message'
-            placeholder='Thanks message here....'
-            errorMessage={form.formState.errors.thanksMessage?.message}
-            {...form.register("thanksMessage")}
-          />
-
-          <div className='flex gap-2.5 flex-wrap'>
-            {thanksImages.length > 0 &&
-              thanksImages.map((image, index) => (
-                <div
-                  key={index}
-                  className='relative w-24 h-24 aspect-square rounded-md border overflow-hidden'>
-                  <Image
-                    src={`https://s3.nevaobjects.id/invitekit-bucket/${image}`}
-                    width={96}
-                    height={96}
-                    className='object-cover w-full h-full rounded-md'
-                    alt='Thanks Image'
-                  />
-
-                  <Button
-                    variant={"destructive"}
-                    className='absolute top-2 right-2'
-                    type='button'
-                    size={"icon"}
-                    onClick={() => onRemoveThanksImage(index)}>
-                    <TrashIcon />
-                  </Button>
-                </div>
-              ))}
-          </div>
-          <DialogGallery
-            activeState='images'
-            eventId={eventId || ""}
-            images={defaultValues?.gallery || []}
-            onImageSelect={(images: string[]) => {
-              const limitedImages = images.slice(0, 8);
-              setThanksImages(limitedImages);
-            }}
-          />
-        </div>
+        )}
       </div>
 
       <Button
@@ -622,17 +642,6 @@ export default function FormWeddingPremiumFilm({
         type='submit'>
         Save
       </Button>
-
-      <pre>
-        {JSON.stringify(
-          form.formState.errors,
-          (key, value) =>
-            typeof value === "object" && value !== null && "message" in value
-              ? { message: value.message }
-              : value,
-          2,
-        )}
-      </pre>
     </form>
   );
 }
