@@ -9,7 +9,7 @@ import {
 } from "@/services/invitation/event.services";
 import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
-import { chromium } from "playwright"; // or puppeteer
+import { chromium } from "playwright-core"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
