@@ -9,7 +9,8 @@ import {
 } from "@/services/invitation/event.services";
 import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
-import { chromium } from "playwright-core"; // or puppeteer
+import { chromium } from "playwright-core";
+import chromiumExecutable from "@sparticuz/chromium"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
@@ -33,16 +34,8 @@ const createThumbnail = async (id: string) => {
 
   const launchOptions = isVercel
     ? {
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--no-first-run",
-          "--no-zygote",
-          "--single-process", // ← Flag penting untuk Vercel
-          "--disable-gpu",
-        ],
+        args: chromiumExecutable.args,
+        executablePath: await chromiumExecutable.executablePath(),
         headless: true,
       }
     : {};

@@ -15,7 +15,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  transpilePackages: ["playwright-core"],
 };
 
 export default nextConfig;
