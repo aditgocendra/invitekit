@@ -30,10 +30,10 @@ const SaveSchema = z.object({
 });
 
 const createThumbnail = async (id: string) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isVercel = !!process.env.VERCEL;
 
   const getBrowserLaunchOptions = async () => {
-    if (isProduction) {
+    if (isVercel) {
       const executablePath = await chromiumServerless.executablePath();
       return {
         executablePath,
