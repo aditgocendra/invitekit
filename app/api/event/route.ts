@@ -9,12 +9,13 @@ import {
 } from "@/services/invitation/event.services";
 import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
-import { chromium } from "playwright-core";
+// import { chromium } from "playwright-core";
+// import puppeteer from "puppeteer-core";
 // import chromiumExecutable from "@sparticuz/chromium"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
-import path from "path";
+// import path from "path";
 
 export const runtime = "nodejs";
 
@@ -35,41 +36,39 @@ const SaveSchema = z.object({
 const createThumbnail = async (id: string) => {
   const isVercel = !!process.env.VERCEL;
 
-  let executablePath: string | undefined;
-  let args: string[] = [];
+  // 🔥 dynamic import (WAJIB di Next 16)
+  const puppeteer = await import("puppeteer-core");
+
+  let browser;
 
   if (isVercel) {
-    const chromiumExecutable = await import("@sparticuz/chromium");
+    const chromium = (await import("@sparticuz/chromium")).default;
 
-    try {
-      executablePath = await chromiumExecutable.default.executablePath();
-    } catch {
-      // 🔥 fallback manual (penting di Next 16)
-      executablePath = path.join(
-        process.cwd(),
-        "node_modules/@sparticuz/chromium/bin/chromium",
-      );
-    }
-
-    args = chromiumExecutable.default.args;
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  } else {
+    // ✅ local dev pakai chrome biasa
+    browser = await puppeteer.launch({
+      headless: true,
+    });
   }
 
-  const browser = await chromium.launch({
-    args,
-    executablePath,
-    headless: true,
-  });
+  const page = await browser.newPage();
 
-  const page = await browser.newPage({
-    viewport: {
-      width: 900,
-      height: 1600,
-    },
+  await page.setViewport({
+    width: 900,
+    height: 1600,
   });
 
   const url = `${process.env.NEXT_PUBLIC_APP_URL}/preview?id=${id}&screenshot=true`;
 
-  await page.goto(url, { waitUntil: "networkidle" });
+  await page.goto(url, {
+    waitUntil: "networkidle0",
+    timeout: 60000,
+  });
 
   // ✅ Inject CSS to remove max-width constraints
   await page.addStyleTag({
