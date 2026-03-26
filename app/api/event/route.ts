@@ -13,6 +13,7 @@ import { chromium } from "playwright"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
+import chromiumServerless from "@sparticuz/chromium";
 
 const Primitive = z.union([
   z.string(),
@@ -29,7 +30,26 @@ const SaveSchema = z.object({
 });
 
 const createThumbnail = async (id: string) => {
-  const browser = await chromium.launch();
+  const isProduction = process.env.NODE_ENV === "production";
+
+  const getBrowserLaunchOptions = async () => {
+    if (isProduction) {
+      const executablePath = await chromiumServerless.executablePath();
+      return {
+        executablePath,
+        args: chromiumServerless.args,
+        headless: true,
+      };
+    }
+    // Local: gunakan Playwright bawaan
+    return {};
+  };
+
+  const launchOptions = await getBrowserLaunchOptions();
+  const browser = await chromium.launch({
+    ...launchOptions,
+  });
+
   const page = await browser.newPage({
     viewport: {
       width: 900,
@@ -310,8 +330,7 @@ export async function PUT(req: NextRequest) {
         thumb: imagePath,
       },
     });
-  } catch (e) {
-    console.error(e);
+  } catch {
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },
