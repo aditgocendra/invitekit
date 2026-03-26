@@ -15,13 +15,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // Externalize playwright-core di server-side
-      config.externals.push("playwright-core");
-    }
-    return config;
-  },
+  transpilePackages: ["playwright-core"],
 };
 
 export default nextConfig;
