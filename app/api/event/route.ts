@@ -188,7 +188,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ data: r }, { status: 200 });
-  } catch {
+  } catch (e: unknown) {
+    console.log((e as Error).message);
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },
@@ -330,7 +331,8 @@ export async function PUT(req: NextRequest) {
         thumb: imagePath,
       },
     });
-  } catch {
+  } catch (e: unknown) {
+    console.log((e as Error).message);
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },
