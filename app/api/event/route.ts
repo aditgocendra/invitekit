@@ -13,7 +13,6 @@ import { chromium } from "playwright"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
-import chromiumServerless from "@sparticuz/chromium";
 
 const Primitive = z.union([
   z.string(),
@@ -32,20 +31,22 @@ const SaveSchema = z.object({
 const createThumbnail = async (id: string) => {
   const isVercel = !!process.env.VERCEL;
 
-  const getBrowserLaunchOptions = async () => {
-    if (isVercel) {
-      const executablePath = await chromiumServerless.executablePath();
-      return {
-        executablePath,
-        args: chromiumServerless.args,
+  const launchOptions = isVercel
+    ? {
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--single-process", // ← Flag penting untuk Vercel
+          "--disable-gpu",
+        ],
         headless: true,
-      };
-    }
-    // Local: gunakan Playwright bawaan
-    return {};
-  };
+      }
+    : {};
 
-  const launchOptions = await getBrowserLaunchOptions();
   const browser = await chromium.launch({
     ...launchOptions,
   });
