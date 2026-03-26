@@ -10,10 +10,13 @@ import {
 import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
 import { chromium } from "playwright-core";
-import chromiumExecutable from "@sparticuz/chromium"; // or puppeteer
+// import chromiumExecutable from "@sparticuz/chromium"; // or puppeteer
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
+import path from "path";
+
+export const runtime = "nodejs";
 
 const Primitive = z.union([
   z.string(),
@@ -32,16 +35,29 @@ const SaveSchema = z.object({
 const createThumbnail = async (id: string) => {
   const isVercel = !!process.env.VERCEL;
 
-  const launchOptions = isVercel
-    ? {
-        args: chromiumExecutable.args,
-        executablePath: await chromiumExecutable.executablePath(),
-        headless: true,
-      }
-    : {};
+  let executablePath: string | undefined;
+  let args: string[] = [];
+
+  if (isVercel) {
+    const chromiumExecutable = await import("@sparticuz/chromium");
+
+    try {
+      executablePath = await chromiumExecutable.default.executablePath();
+    } catch {
+      // 🔥 fallback manual (penting di Next 16)
+      executablePath = path.join(
+        process.cwd(),
+        "node_modules/@sparticuz/chromium/bin/chromium",
+      );
+    }
+
+    args = chromiumExecutable.default.args;
+  }
 
   const browser = await chromium.launch({
-    ...launchOptions,
+    args,
+    executablePath,
+    headless: true,
   });
 
   const page = await browser.newPage({
