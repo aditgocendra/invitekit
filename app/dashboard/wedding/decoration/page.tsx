@@ -26,6 +26,7 @@ export default async function DecorationPage({ searchParams }: PageProps) {
       eventId={event.id as string}
       slug={event.slug}
       templateKey={template.key}
+      thumb={template.previewImage}
       config={config}
       FormComponent={template.FormComponent}
     />

@@ -14,9 +14,11 @@ type EditorClientProps<TConfig> = {
   eventId: string;
   slug: string;
   templateKey: string;
+  thumb: string;
   config: TConfig;
   FormComponent: (props: {
     templateKey: string;
+    thumb: string;
     config?: TConfig;
     eventId: string;
   }) => React.ReactNode;
@@ -26,6 +28,7 @@ export default function EditorClient<TConfig>({
   eventId,
   slug,
   templateKey,
+  thumb,
   config,
   FormComponent,
 }: EditorClientProps<TConfig>) {
@@ -126,7 +129,7 @@ export default function EditorClient<TConfig>({
 
       <div className='flex flex-1 min-h-0 gap-2'>
         <div className='min-w-[320px] w-[320px] min-h-0 bg-card rounded-lg p-4 shadow-card border border-border overflow-y-auto'>
-          {FormComponent({ templateKey, config, eventId })}
+          {FormComponent({ templateKey, config, eventId, thumb })}
         </div>
 
         <div className='flex-1 min-h-0 rounded-xl shadow-card border border-border p-2.5 overflow-hidden'>
