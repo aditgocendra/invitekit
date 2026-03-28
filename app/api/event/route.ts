@@ -9,13 +9,10 @@ import {
 } from "@/services/invitation/event.services";
 import { deleteInvitationsByIds } from "@/services/invitation/invitation.services";
 import { NextRequest, NextResponse } from "next/server";
-// import { chromium } from "playwright-core";
-// import puppeteer from "puppeteer-core";
-// import chromiumExecutable from "@sparticuz/chromium"; // or puppeteer
+
 import z from "zod";
 import { nanoid } from "nanoid";
 import { MultipleImageSchema } from "@/validation/image.validation";
-// import path from "path";
 
 export const runtime = "nodejs";
 
@@ -31,69 +28,8 @@ const Primitive = z.union([
 const SaveSchema = z.object({
   templateKey: z.string(),
   values: z.record(z.string(), Primitive),
+  thumb: z.string(),
 });
-
-const createThumbnail = async (id: string) => {
-  const isVercel = !!process.env.VERCEL;
-
-  // 🔥 dynamic import (WAJIB di Next 16)
-  const puppeteer = await import("puppeteer-core");
-
-  let browser;
-
-  if (isVercel) {
-    const chromium = (await import("@sparticuz/chromium")).default;
-
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(),
-      headless: true,
-    });
-  } else {
-    // ✅ local dev pakai chrome biasa
-    browser = await puppeteer.launch({
-      headless: true,
-    });
-  }
-
-  const page = await browser.newPage();
-
-  await page.setViewport({
-    width: 900,
-    height: 1600,
-  });
-
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/preview?id=${id}&screenshot=true`;
-
-  await page.goto(url, {
-    waitUntil: "networkidle0",
-    timeout: 60000,
-  });
-
-  // ✅ Inject CSS to remove max-width constraints
-  await page.addStyleTag({
-    content: `
-    * {
-      max-width: none !important;
-    }
-    body, html {
-      width: 900px !important;
-      overflow: hidden !important;
-    }
-  `,
-  });
-
-  const png = await page.screenshot({
-    type: "png",
-    fullPage: false,
-  });
-  await browser.close();
-
-  // ✅ Convert Buffer to Uint8Array (or Blob) to satisfy TypeScript
-  const buffer = Uint8Array.from(png);
-
-  return buffer;
-};
 
 const uploadImage = async ({
   file,
@@ -136,9 +72,10 @@ export async function POST(req: NextRequest) {
   // Extract and parse values JSON
   const values = JSON.parse(formData.get("values") as string);
   const templateKey = formData.get("templateKey") as string;
+  const thumb = formData.get("thumb") as string;
 
   // Validate with Zod
-  const parsed = SaveSchema.safeParse({ templateKey, values });
+  const parsed = SaveSchema.safeParse({ templateKey, values, thumb });
 
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid input" }, { status: 400 });
@@ -157,17 +94,11 @@ export async function POST(req: NextRequest) {
   try {
     const r = await createInvitationEvent({
       templateKey: templateKey,
+      thumb: thumb,
       userId: session.user.id,
       configJson: values,
       type: "WEDDING",
       slug: nanoid(6),
-    });
-
-    // Create & upload thumbnail
-    const thumbImage = await createThumbnail(r.id);
-    const imagePath = await uploadImage({
-      file: thumbImage,
-      specPath: `thumbnails/${r.id}`,
     });
 
     // Upload gallery images
@@ -192,13 +123,12 @@ export async function POST(req: NextRequest) {
     // Update event data
     await updateEvent({
       id: r.id,
-      thumb: imagePath,
+      // thumb: imagePath,
       configJson: enrichedValues,
     });
 
     return NextResponse.json({ data: r }, { status: 200 });
-  } catch (e: unknown) {
-    console.log((e as Error).message);
+  } catch {
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },
@@ -260,18 +190,6 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ message: "Event not found" }, { status: 404 });
     }
 
-    // Update thumbnail
-    const thumbImage = await createThumbnail(eventId);
-    const imagePath = await uploadImage({
-      file: thumbImage,
-      specPath: `thumbnails/${eventId}`,
-    });
-
-    // Delete old thumbnail
-    if (event.thumb) {
-      await deleteObject(event.thumb);
-    }
-
     // Gallery management with type guard
     let currentGallery: string[] = [];
 
@@ -330,18 +248,15 @@ export async function PUT(req: NextRequest) {
     await updateEvent({
       id: eventId,
       configJson: enrichedValues,
-      thumb: imagePath,
     });
 
     return NextResponse.json({
       success: true,
       data: {
         gallery: currentGallery,
-        thumb: imagePath,
       },
     });
-  } catch (e: unknown) {
-    console.log((e as Error).message);
+  } catch {
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 },
