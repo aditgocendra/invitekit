@@ -30,10 +30,12 @@ interface LocationData {
 
 export default function FormWeddingPremiumFilm({
   templateKey,
+  thumb,
   config,
   eventId,
 }: {
   templateKey: string;
+  thumb: string;
   config?: JsonValue;
   eventId?: string;
 }) {
@@ -109,8 +111,13 @@ export default function FormWeddingPremiumFilm({
     };
 
     const formData = new FormData();
+
     // Append templateKey
     formData.append("templateKey", templateKey);
+
+    // Append thumb
+    formData.append("thumb", thumb);
+
     // Append form values sebagai JSON string
     formData.append("values", JSON.stringify(payload));
 

@@ -31,10 +31,12 @@ interface LocationData {
 
 export default function FormWeddingBasicMinimal({
   templateKey,
+  thumb,
   config,
   eventId,
 }: {
   templateKey: string;
+  thumb: string;
   config?: JsonValue;
   eventId?: string;
 }) {
@@ -109,6 +111,9 @@ export default function FormWeddingBasicMinimal({
 
     // Append templateKey
     formData.append("templateKey", templateKey);
+
+    // Append thumb
+    formData.append("thumb", thumb);
 
     // Append form values sebagai JSON string
     formData.append("values", JSON.stringify(data));
