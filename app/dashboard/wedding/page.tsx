@@ -43,6 +43,12 @@ export default async function Wedding() {
       <div className='grid grid-cols-6 gap-4'>
         {data.map((d) => {
           const template = TEMPLATE_REGISTRY[d.templateKey];
+
+          const config = d.configJson as Record<string, unknown>;
+
+          const brideName = (config.brideName as string) || "";
+          const groomName = (config.groomName as string) || "";
+
           return (
             <div
               key={d.id}
@@ -65,7 +71,10 @@ export default async function Wedding() {
 
               <div className='absolute inset-0 bg-linear-to-b from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
-              <div className='absolute top-4 right-4 '>
+              <div className='absolute top-4 w-full flex justify-between items-center px-4'>
+                <span className='bg-white px-2 py-1 text-xs font-semibold rounded-lg'>
+                  {groomName || "Groom"} & {brideName || "Bride"}
+                </span>
                 <DropdownMenu>
                   <DropdownMenuTrigger
                     asChild
