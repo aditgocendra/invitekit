@@ -30,7 +30,7 @@ export default async function CreateInvitation() {
             className='group'>
             <div className='relative aspect-9/16 w-full overflow-hidden rounded-xl shadow-md'>
               <Image
-                src={template.previewImage}
+                src={`https://s3.nevaobjects.id/invitekit-bucket/${template.previewImage}`}
                 alt={template.name}
                 fill
                 sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw'
@@ -60,7 +60,10 @@ export default async function CreateInvitation() {
                     </DialogHeader>
 
                     <div className='overflow-y-auto flex-1 min-h-0 pr-2'>
-                      <template.FormComponent templateKey={template.key} />
+                      <template.FormComponent
+                        templateKey={template.key}
+                        thumb={template.previewImage}
+                      />
                     </div>
                   </DialogContent>
                 </Dialog>
