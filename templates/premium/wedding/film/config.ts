@@ -4,5 +4,5 @@ export const premiumWeddingFilmConfig = {
   tier: "premium" as const,
   eventType: "wedding" as const,
   description: "Template premium with theme film wedding invitation",
-  previewImage: "/assets/templates/premium/wedding/film/preview.webp",
+  previewImage: "template/wedding/premium/film/thumb.webp",
 };

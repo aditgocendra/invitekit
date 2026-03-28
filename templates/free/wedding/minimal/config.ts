@@ -4,5 +4,5 @@ export const freeWeddingMinimalConfig = {
   tier: "free" as const,
   eventType: "wedding" as const,
   description: "Template minimal wedding invitation",
-  previewImage: "/assets/templates/free/wedding/minimal/preview.webp",
+  previewImage: "template/wedding/free/minimal/thumb.webp",
 };
