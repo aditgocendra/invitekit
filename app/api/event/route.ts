@@ -165,18 +165,12 @@ export async function PUT(req: NextRequest) {
   // Extract and parse values JSON
   const valuesString = formData.get("values");
   const templateKey = formData.get("templateKey");
-
-  if (!valuesString || !templateKey) {
-    return NextResponse.json(
-      { message: "Missing required fields" },
-      { status: 400 },
-    );
-  }
+  const thumb = formData.get("thumb");
 
   const values = JSON.parse(valuesString as string);
 
   // Validate with Zod
-  const parsed = SaveSchema.safeParse({ templateKey, values });
+  const parsed = SaveSchema.safeParse({ templateKey, values, thumb });
 
   if (!parsed.success) {
     return NextResponse.json({ message: "Invalid input" }, { status: 400 });
