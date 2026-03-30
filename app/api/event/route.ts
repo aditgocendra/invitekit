@@ -301,7 +301,7 @@ export async function DELETE(req: NextRequest) {
 
   if (r.thumb) await deleteObject(r.thumb);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ message: "Delete event succcess" });
 }
 
 export async function GET() {
