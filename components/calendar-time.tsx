@@ -13,6 +13,7 @@ import {
   FieldValues,
   UseControllerProps,
 } from "react-hook-form";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 type CalendarTimeExtraProps = {
   label?: string;
@@ -113,7 +114,7 @@ export default function CalendarTimeCalendarTime<
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className='flex flex-col gap-4 border-t px-6 py-5! md:flex-row'>
+                <CardFooter className='flex flex-col gap-4 border-t px-6 py-5! md:flex-row justify-between'>
                   <div className='text-sm'>
                     {field.value && selectedTime ? (
                       <>
@@ -131,6 +132,13 @@ export default function CalendarTimeCalendarTime<
                       <>Select a date and time for your {label}.</>
                     )}
                   </div>
+                  <PopoverClose asChild>
+                    <Button
+                      type='button'
+                      disabled={!field.value || !selectedTime}>
+                      Close
+                    </Button>
+                  </PopoverClose>
                 </CardFooter>
               </Card>
             </PopoverContent>

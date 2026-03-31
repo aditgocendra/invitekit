@@ -54,8 +54,11 @@ export async function POST(req: NextRequest) {
   const parsed = Schema.safeParse({ eventId, images });
 
   if (!parsed.success) {
-    console.log(parsed.error.format());
-    return NextResponse.json({ message: "Bad request" }, { status: 400 });
+    const flattenedErrors = z.flattenError(parsed.error);
+    return NextResponse.json(
+      { message: `Fail image upload : ${flattenedErrors.fieldErrors.images}` },
+      { status: 400 },
+    );
   }
 
   //   const { eventId, images } = parsed.data;
@@ -70,52 +73,62 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const newImagePaths = await Promise.all(
-    images.map(async (image) => {
-      const imagePath = await uploadImage({
-        file: image,
-        specPath: `gallery/${eventId}`,
-      });
-      return imagePath;
-    }),
-  );
+  try {
+    const newImagePaths = await Promise.all(
+      images.map(async (image) => {
+        const imagePath = await uploadImage({
+          file: image,
+          specPath: `gallery/${eventId}`,
+        });
+        return imagePath;
+      }),
+    );
 
-  let currentGallery: string[] = [];
+    let currentGallery: string[] = [];
 
-  if (
-    event.configJson &&
-    typeof event.configJson === "object" &&
-    !Array.isArray(event.configJson)
-  ) {
-    const config = event.configJson as Record<string, unknown>;
-    if (Array.isArray(config.gallery)) {
-      currentGallery = config.gallery.filter(
-        (item): item is string => typeof item === "string",
-      );
+    if (
+      event.configJson &&
+      typeof event.configJson === "object" &&
+      !Array.isArray(event.configJson)
+    ) {
+      const config = event.configJson as Record<string, unknown>;
+      if (Array.isArray(config.gallery)) {
+        currentGallery = config.gallery.filter(
+          (item): item is string => typeof item === "string",
+        );
+      }
     }
+
+    currentGallery = [...currentGallery, ...newImagePaths];
+
+    const baseConfig = (
+      event.configJson &&
+      typeof event.configJson === "object" &&
+      !Array.isArray(event.configJson)
+        ? (event.configJson as Record<string, unknown>)
+        : {}
+    ) as Record<string, unknown>;
+
+    const updatedConfigJson = {
+      ...baseConfig,
+      gallery: currentGallery,
+    };
+
+    await updateEvent({
+      id: eventId,
+      configJson: updatedConfigJson,
+    });
+
+    return NextResponse.json(
+      { message: "Success upload image" },
+      { status: 200 },
+    );
+  } catch {
+    return NextResponse.json(
+      { message: "Failed to upload image" },
+      { status: 500 },
+    );
   }
-
-  currentGallery = [...currentGallery, ...newImagePaths];
-
-  const baseConfig = (
-    event.configJson &&
-    typeof event.configJson === "object" &&
-    !Array.isArray(event.configJson)
-      ? (event.configJson as Record<string, unknown>)
-      : {}
-  ) as Record<string, unknown>;
-
-  const updatedConfigJson = {
-    ...baseConfig,
-    gallery: currentGallery,
-  };
-
-  await updateEvent({
-    id: eventId,
-    configJson: updatedConfigJson, // ✅ Sekarang TypeScript happy
-  });
-
-  return NextResponse.json({ message: "Success" }, { status: 200 });
 }
 
 export async function DELETE(req: NextRequest) {

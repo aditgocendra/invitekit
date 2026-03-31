@@ -18,6 +18,7 @@ import DialogGallery from "@/components/dialog/dialog-gallery";
 import { TrashIcon } from "lucide-react";
 import Image from "next/image";
 import DialogAudioSelect from "@/components/dialog/dialog-audio-select";
+import { toast } from "sonner";
 
 type PremiumFilmlWType = z.infer<typeof WeddingPremiumFilmFormSchema>;
 type PremiumFilmWDraft = DeepPartial<PremiumFilmlWType>;
@@ -130,10 +131,24 @@ export default function FormWeddingPremiumFilm({
         },
       );
 
+      const result = await response.json();
+
+      toast("Create or update event", {
+        duration: 3000,
+        position: "top-center",
+        description: result.message,
+        richColors: true,
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+
       if (!response.ok) return;
 
       if (!eventId) {
-        const result = await response.json();
         redirect(`/dashboard/wedding/decoration?id=${result.data.id}`);
       }
     });
