@@ -127,7 +127,10 @@ export async function POST(req: NextRequest) {
       configJson: enrichedValues,
     });
 
-    return NextResponse.json({ data: r }, { status: 200 });
+    return NextResponse.json(
+      { data: r, message: "Event created" },
+      { status: 200 },
+    );
   } catch {
     return NextResponse.json(
       { message: "Something went wrong" },
@@ -245,7 +248,7 @@ export async function PUT(req: NextRequest) {
     });
 
     return NextResponse.json({
-      success: true,
+      message: "Event updated successfully",
       data: {
         gallery: currentGallery,
       },
