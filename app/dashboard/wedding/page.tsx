@@ -25,7 +25,13 @@ export default async function Wedding() {
           Create Event
         </Link>
       </div>
-      <GridEvent data={data} />
+      {data.length === 0 ? (
+        <span className='text-muted-foreground text-center my-20'>
+          No event
+        </span>
+      ) : (
+        <GridEvent data={data} />
+      )}
     </>
   );
 }
