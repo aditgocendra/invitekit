@@ -15,6 +15,7 @@ import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useLoading } from "@/hooks/use-loading";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface DialogGalleryProps {
   eventId: string;
@@ -61,6 +62,20 @@ export default function DialogGallery({
         body: formData,
       });
 
+      const result = await response.json();
+
+      toast("Upload Image", {
+        description: result.message,
+        duration: 3000,
+        position: "top-center",
+        richColors: true,
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
       if (!response.ok) return;
       refresh();
       setImageUpload([]);
@@ -109,7 +124,9 @@ export default function DialogGallery({
             <TabsTrigger value='upload'>Upload</TabsTrigger>
             <TabsTrigger value='images'>Images</TabsTrigger>
           </TabsList>
-          <TabsContent value='upload'>
+          <TabsContent
+            value='upload'
+            className='space-y-2'>
             <div
               className={`border rounded-lg p-2.5 min-h-[250px] flex flex-col gap-4 items-center ${imagesUpload.length > 0 ? "justify-between" : "justify-center"}`}>
               <div className='flex gap-2 flex-wrap'>
@@ -159,6 +176,14 @@ export default function DialogGallery({
                   Upload
                 </Button>
               )}
+            </div>
+            <div className='flex flex-col'>
+              <span className='text-sm text-muted-foreground'>
+                - Maximum image size 1MB.
+              </span>
+              <span className='text-sm text-muted-foreground'>
+                - Maximum image upload 10.
+              </span>
             </div>
           </TabsContent>
 
@@ -237,7 +262,6 @@ export default function DialogGallery({
           </TabsContent>
         </Tabs>
 
-        <div></div>
         <DialogFooter>
           <Button onClick={() => setOpened(false)}>Close</Button>
         </DialogFooter>
