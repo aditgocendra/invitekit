@@ -20,7 +20,6 @@ ${link}
 
 Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
 
-Jika Anda butuh bantuan, jangan ragu untuk menghubungi kami.
 
 Terima kasih,  
 ${groomBrideName}`.trim();
