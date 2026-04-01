@@ -44,49 +44,81 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const jti = crypto.randomUUID();
+    const { guests } = parsed.data;
 
-    const token = await signInvitationToken({
-      type: "invitation-event",
-      name: parsed.data.name,
-      jti,
+    if (guests.length > 10) {
+      return NextResponse.json(
+        { message: "Maximum 10 guest per bulk" },
+        { status: 400 },
+      );
+    }
+
+    let counterSuccess = 0;
+    let counterFailed = 0;
+
+    const result = await Promise.all(
+      guests.map(async (guest) => {
+        const jti = crypto.randomUUID();
+        const token = await signInvitationToken({
+          type: "invitation-event",
+          name: guest.name,
+          jti,
+        });
+
+        const slug = nanoid(6);
+
+        const data = {
+          name: guest.name,
+          phone: guest.phoneNumber,
+          token: token,
+          slug: slug,
+          eventId: eventId,
+          sentAt: new Date(),
+        };
+
+        const inv = await createInvitation({ ...data });
+
+        const config = event.configJson as Record<string, unknown>;
+
+        const brideName = (config.brideName as string) || "";
+        const groomName = (config.groomName as string) || "";
+
+        const message = generateWhatsAppGuestInvitationMessage({
+          link: `${process.env.NEXT_PUBLIC_APP_URL}/i/${slug}`,
+          groomBrideName: `${groomName} & ${brideName}`,
+          guestName: guest.name,
+        });
+
+        const r = await sendWhatsApp({
+          target: guest.phoneNumber,
+          message,
+        });
+
+        return {
+          id: inv.id,
+          status: r.status,
+        };
+      }),
+    );
+
+    await Promise.all(
+      result.map(async (d) => {
+        if (d.status) {
+          counterSuccess += 1;
+        } else {
+          counterFailed += 1;
+        }
+
+        await updateSentStatus({
+          id: d.id,
+          sentStatus: d.status ? SentStatusType.SUCCESS : SentStatusType.FAIL,
+        });
+      }),
+    );
+
+    return NextResponse.json({
+      message: `Success: ${counterSuccess}, Failed: ${counterFailed}`,
     });
-
-    const slug = nanoid(6);
-
-    const data = {
-      name: parsed.data.name,
-      phone: parsed.data.phoneNumber,
-      token: token,
-      slug: slug,
-      eventId: eventId,
-      sentAt: new Date(),
-    };
-
-    const inv = await createInvitation({ ...data });
-
-    const config = event.configJson as Record<string, unknown>;
-
-    const brideName = (config.brideName as string) || "";
-    const groomName = (config.groomName as string) || "";
-
-    const message = generateWhatsAppGuestInvitationMessage({
-      link: `${process.env.NEXT_PUBLIC_APP_URL}/i/${slug}`,
-      groomBrideName: `${groomName} & ${brideName}`,
-      guestName: data.name,
-    });
-
-    const r = await sendWhatsApp({
-      target: parsed.data.phoneNumber,
-      message,
-    });
-
-    await updateSentStatus({
-      id: inv.id,
-      sentStatus: r.status ? SentStatusType.SUCCESS : SentStatusType.FAIL,
-    });
-
-    return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json(
       { message: "Internal server error" },
