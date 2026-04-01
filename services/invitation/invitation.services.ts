@@ -57,7 +57,7 @@ export const getInvitationById = async (id: string) => {
       id: true,
       slug: true,
       phone: true,
-      event: { select: { userId: true } },
+      event: { select: { userId: true, configJson: true } },
       rsvp: true,
     },
   });
