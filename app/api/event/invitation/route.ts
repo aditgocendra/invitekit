@@ -1,3 +1,4 @@
+import { generateWhatsAppGuestInvitationMessage } from "@/components/template-message/invitation";
 import { auth } from "@/lib/auth";
 import { signInvitationToken } from "@/lib/token";
 import { sendWhatsApp } from "@/lib/wa-helper";
@@ -64,7 +65,16 @@ export async function POST(req: NextRequest) {
 
     const inv = await createInvitation({ ...data });
 
-    const message = `Haii please join us ${process.env.NEXT_PUBLIC_APP_URL}/i/${slug}`;
+    const config = event.configJson as Record<string, unknown>;
+
+    const brideName = (config.brideName as string) || "";
+    const groomName = (config.groomName as string) || "";
+
+    const message = generateWhatsAppGuestInvitationMessage({
+      link: `${process.env.NEXT_PUBLIC_APP_URL}/i/${slug}`,
+      groomBrideName: `${groomName} & ${brideName}`,
+      guestName: data.name,
+    });
 
     const r = await sendWhatsApp({
       target: parsed.data.phoneNumber,
