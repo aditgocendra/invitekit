@@ -15,6 +15,7 @@ import z from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/hooks/use-loading";
+import { toast } from "sonner";
 
 type InvitationEventInput = z.infer<typeof InvitationEventFormSchema>;
 export function DialogInvitation({ eventId }: { eventId: string }) {
@@ -26,6 +27,21 @@ export function DialogInvitation({ eventId }: { eventId: string }) {
       const r = await fetch(`/api/event/invitation?eventId=${eventId}`, {
         method: "POST",
         body: JSON.stringify(data),
+      });
+
+      const json = await r.json();
+
+      toast("Invite Guest", {
+        description: json.message,
+        duration: 3000,
+        position: "top-center",
+        richColors: true,
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
       });
 
       if (r.ok) {
@@ -47,10 +63,12 @@ export function DialogInvitation({ eventId }: { eventId: string }) {
           <span className='hidden lg:inline'>Invite</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-[725px]'>
         <DialogHeader>
           <DialogTitle>Invite Guest</DialogTitle>
-          <DialogDescription>Invite guest to your wedding.</DialogDescription>
+          <DialogDescription>
+            Invite guest to your wedding. (Max 10 guest per invitation)
+          </DialogDescription>
         </DialogHeader>
         <FormInvitation onSubmit={onSubmit} />
         <DialogFooter className='sm:justify-start'></DialogFooter>

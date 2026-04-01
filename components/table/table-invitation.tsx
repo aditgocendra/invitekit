@@ -182,19 +182,11 @@ export default function TableInvitation({ data, totalPages }: TableUserProps) {
         <DialogInvitation eventId={params.get("id") as string} />
       </div>
 
-      {/* Action Delete Button */}
+      {/* Action Button */}
       <div
         className={`${selectedIds.length === 0 || dialogDelete ? "hidden" : "flex"}  items-center justify-between bg-card rounded-lg p-2.5 shadow-card border border-border`}>
         <p className='texdt-sm'>{selectedIds.length} Invitation selected</p>
         <div className='flex gap-2'>
-          <Button
-            size='sm'
-            variant='outline'
-            onClick={handleDialogDelete}>
-            <RotateCw className='mx-1' />
-            <span className='hidden lg:inline'>Re-Invite</span>
-          </Button>
-
           <Button
             size='sm'
             variant='destructive'
