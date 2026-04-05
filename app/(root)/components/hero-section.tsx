@@ -1,12 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ChevronDown, Sparkles } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { RefObject } from "react";
 
 export default function HeroSection({
   ref,
+  scrollToView,
 }: {
   ref: RefObject<HTMLDivElement | null>;
+  scrollToView: (view: "view1" | "view2" | "view3" | "view4" | "view5") => void;
 }) {
   return (
     <section
@@ -40,13 +43,17 @@ export default function HeroSection({
 
             {/* CTA Buttons */}
             <div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
-              <Button size='xxl'>Start Free Now</Button>
+              <Link
+                href='/sign-in'
+                className={buttonVariants({ size: "xxl" })}>
+                Start Free Now
+              </Link>
 
-              <Button
-                size='xxl'
-                variant='outline'>
+              <Link
+                href='/example'
+                className={buttonVariants({ size: "xxl", variant: "outline" })}>
                 View Example
-              </Button>
+              </Link>
             </div>
           </div>
 
@@ -67,11 +74,15 @@ export default function HeroSection({
 
       {/* Scroll Indicator */}
       <div className='absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce'>
-        <ChevronDown
-          name='ChevronDownIcon'
-          size={32}
-          className='text-primary'
-        />
+        <Button
+          variant={"ghost"}
+          onClick={() => scrollToView("view2")}>
+          <ChevronDown
+            name='ChevronDownIcon'
+            size={32}
+            className='text-primary'
+          />
+        </Button>
       </div>
     </section>
   );
