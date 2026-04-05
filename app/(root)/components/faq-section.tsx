@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BadgeQuestionMark, MessageCircleQuestionMark } from "lucide-react";
+import Link from "next/link";
 import { RefObject } from "react";
 
 const FAQS = [
@@ -52,6 +53,11 @@ const FAQS = [
       "The invitation requires an internet connection the first time it is opened. However, after it loads, most of the content will be cached in the browser so it can be accessed again with a minimal connection.",
   },
 ];
+
+const phoneNumber = "62895405732672";
+const message =
+  "Halo, saya ingin tahu lebih lanjut, apakah kami bisa membantu saya ?";
+const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
 export default function FAQSection({
   ref,
@@ -115,7 +121,11 @@ export default function FAQSection({
             </CardDescription>
           </CardHeader>
           <CardContent className='flex justify-center'>
-            <Button className='min-h-12 min-w-52'>Chat with us</Button>
+            <Link
+              href={whatsappUrl}
+              className={buttonVariants({ className: "min-h-12 min-w-52" })}>
+              Chat with us
+            </Link>
           </CardContent>
         </Card>
       </div>

@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-separator";
 import { CheckCircleIcon, CircleDollarSign } from "lucide-react";
+import Link from "next/link";
 import { RefObject } from "react";
 
 const pricingPlans = [
@@ -127,7 +128,11 @@ export default function PriceSection({
                   <p className='text-xs'>Per Month</p>
                 </div>
 
-                <Button className='w-full min-h-12'>Get Started</Button>
+                <Link
+                  href={"/sign-in"}
+                  className={buttonVariants({ className: "w-full min-h-12" })}>
+                  Get Started
+                </Link>
               </div>
 
               <Separator className='my-1 h-0.5 bg-secondary' />
