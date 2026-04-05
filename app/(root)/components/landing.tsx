@@ -17,7 +17,7 @@ export default function Landing() {
   const view5Ref = useRef<HTMLDivElement | null>(null);
 
   const scrollToView = (
-    view: "view1" | "view2" | "view3" | "view4" | "view5"
+    view: "view1" | "view2" | "view3" | "view4" | "view5",
   ) => {
     if (view === "view1" && view1Ref.current) {
       view1Ref.current.scrollIntoView({
@@ -63,7 +63,10 @@ export default function Landing() {
 
       {/* Main */}
       <main>
-        <HeroSection ref={view1Ref} />
+        <HeroSection
+          ref={view1Ref}
+          scrollToView={scrollToView}
+        />
         <ProblemSection ref={view2Ref} />
         <SolutionSection ref={view3Ref} />
         <PriceSection ref={view4Ref} />

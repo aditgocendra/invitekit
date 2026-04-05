@@ -1,17 +1,21 @@
 import { AtSign, PhoneCall } from "lucide-react";
 import Link from "next/link";
 
+const phoneNumber = "62895405732672";
+const message =
+  "Halo, saya ingin tahu lebih lanjut, apakah kami bisa membantu saya ?";
+const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
 const footerLinks = {
   product: [
-    { label: "Wedding Templates", href: "#templates" },
-    { label: "Circumcision Templates", href: "#templates" },
+    { label: "Wedding Templates", href: "/example" },
+    { label: "Circumcision Templates", href: "/example" },
     { label: "Feature", href: "#solution" },
     { label: "Price", href: "#pricing" },
   ],
   company: [
     { label: "About Us", href: "#" },
     { label: "Blog", href: "#" },
-    { label: "Carrier", href: "#" },
     { label: "Contact", href: "#" },
   ],
   support: [
@@ -26,7 +30,7 @@ const socialLinks = [
   {
     icon: PhoneCall,
     label: "WhatsApp",
-    href: "https://wa.me/6281234567890",
+    href: whatsappUrl,
   },
   { icon: AtSign, label: "Email", href: "mailto:hello@invitekit.id" },
 ];
@@ -74,7 +78,7 @@ export default function FooterSection() {
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className='text-sm text-background/70 hover:text-primary font-body transition-default'>
+                    className='text-sm text-background/70 font-body transition-default'>
                     {link.label}
                   </Link>
                 </li>
@@ -123,7 +127,7 @@ export default function FooterSection() {
         <div className='pt-8 border-t border-background/10'>
           <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
             <p className='text-sm text-background/70 font-body text-center sm:text-left'>
-              {`© 2025`} InviteKit. Semua hak dilindungi.
+              {`© ${new Date().getFullYear()}`} InviteKit. All rights reserved.
             </p>
 
             <div className='flex items-center gap-6'>
