@@ -129,7 +129,7 @@ export default function PriceSection({
                 </div>
 
                 <Link
-                  href={"/sign-in"}
+                  href={"/dashboard"}
                   className={buttonVariants({ className: "w-full min-h-12" })}>
                   Get Started
                 </Link>
