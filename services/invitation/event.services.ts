@@ -30,6 +30,7 @@ export const createInvitationEvent = async (
 interface UpdateInvitationEventProps {
   id: string;
   thumb?: string;
+  status?: EventStatus;
   configJson?: {
     [key: string]: string | boolean | number | Date | string[];
   };
@@ -41,6 +42,7 @@ export const updateEvent = async (props: UpdateInvitationEventProps) => {
     data: {
       configJson: props.configJson,
       thumb: props.thumb,
+      status: props.status,
     },
   });
 };

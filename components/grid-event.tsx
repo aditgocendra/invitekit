@@ -12,8 +12,11 @@ import {
 } from "./ui/dropdown-menu";
 import { buttonVariants } from "./ui/button";
 import {
+  Archive,
+  CheckCircle,
   FolderKanban,
   Fullscreen,
+  LucideDraftingCompass,
   MoreHorizontalIcon,
   Trash2,
   Wallpaper,
@@ -124,10 +127,32 @@ export default function GridEvent({
 
             <div className='absolute inset-0 bg-linear-to-b from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
-            <div className='absolute top-4 w-full flex justify-between items-center px-4'>
-              <span className='bg-white px-2 py-1 text-xs font-semibold rounded-lg'>
-                {groomName || "Groom"} & {brideName || "Bride"}
-              </span>
+            <div className='absolute top-4 w-full flex justify-between px-4'>
+              <div className='flex flex-col gap-2'>
+                <span className='bg-white px-2 py-1 text-xs font-semibold rounded-lg'>
+                  {groomName || "Groom"} & {brideName || "Bride"}
+                </span>
+
+                <span className='flex gap-2 item-center bg-white px-2 py-1 text-xs text-gray-700 font-semibold rounded-lg'>
+                  {d.status === EventStatus.PUBLISHED ? (
+                    <CheckCircle
+                      className='text-green-700'
+                      size={14}
+                    />
+                  ) : d.status === EventStatus.DRAFT ? (
+                    <LucideDraftingCompass
+                      className='text-red-500'
+                      size={14}
+                    />
+                  ) : (
+                    <Archive
+                      className='text-gray-500'
+                      size={14}
+                    />
+                  )}
+                  {d.status[0].toUpperCase() + d.status.slice(1).toLowerCase()}
+                </span>
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   asChild
