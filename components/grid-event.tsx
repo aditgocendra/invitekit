@@ -1,7 +1,6 @@
 "use client";
 
 import { EventStatus, EventType } from "@/lib/generated/enums";
-import { TEMPLATE_REGISTRY } from "@/templates/registry";
 import Image from "next/image";
 import { Spinner } from "./ui/spinner";
 import {
@@ -97,9 +96,7 @@ export default function GridEvent({
         onDelete={handleDelete}
       />
 
-      {data.map((d) => {
-        const template = TEMPLATE_REGISTRY[d.templateKey];
-
+      {data.map((d, index) => {
         const config = d.configJson as Record<string, unknown>;
 
         const brideName = (config.brideName as string) || "";
@@ -109,17 +106,17 @@ export default function GridEvent({
           <div
             key={d.id}
             className='relative w-full aspect-9/16 overflow-hidden rounded-xl group shadow-card border border-border'>
-            <div className='(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw'>
+            <div className='relative w-full h-40'>
               {d.thumb ? (
                 <Image
                   src={`https://s3.nevaobjects.id/invitekit-bucket/${d.thumb}`}
-                  alt={template.name}
+                  alt={`image_event_thumb_${index}`}
                   fill
                   sizes='(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw'
                   className='object-cover'
                 />
               ) : (
-                <div className='absolute bottom-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center'>
+                <div className='absolute inset-0 flex items-center justify-center'>
                   <Spinner />
                 </div>
               )}
