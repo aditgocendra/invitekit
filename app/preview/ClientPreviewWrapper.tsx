@@ -11,7 +11,7 @@ const PreviewClient = dynamic(() => import("./client-preview/PreviewClient"), {
       <div className='flex flex-col items-center gap-4 rounded-2xl bg-white p-8 shadow-2xl'>
         <div className='h-12 w-12 animate-spin rounded-2xl bg-linear-to-r from-pink-400 to-purple-500 shadow-lg'></div>
         <p className='text-lg font-medium text-gray-700'>
-          Memuat preview undangan...
+          Load Invitation Preview...
         </p>
       </div>
     </div>

@@ -9,6 +9,16 @@ import { DialogConfirmation } from "./dialog/dialog-confirmation";
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import { useLoading } from "@/hooks/use-loading";
+import { EventStatusType } from "@/types/event";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 type EditorClientProps<TConfig> = {
   eventId: string;
@@ -16,6 +26,7 @@ type EditorClientProps<TConfig> = {
   templateKey: string;
   thumb: string;
   config: TConfig;
+  status: EventStatusType;
   FormComponent: (props: {
     templateKey: string;
     thumb: string;
@@ -30,6 +41,7 @@ export default function EditorClient<TConfig>({
   templateKey,
   thumb,
   config,
+  status,
   FormComponent,
 }: EditorClientProps<TConfig>) {
   const { withLoading } = useLoading();
@@ -92,6 +104,36 @@ export default function EditorClient<TConfig>({
     });
   };
 
+  const [statusSelected, setStatusSelected] = useState<EventStatusType>(status);
+
+  const handleStatus = async (status: EventStatusType) => {
+    await withLoading(async () => {
+      const res = await fetch(`/api/event/status?id=${eventId}`, {
+        method: "PUT",
+        body: JSON.stringify({ status }),
+      });
+
+      const json = await res.json();
+
+      toast("Update Status", {
+        duration: 3000,
+        position: "top-center",
+        description: json.message,
+        richColors: true,
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+
+      if (res.ok) {
+        setStatusSelected(status);
+      }
+    });
+  };
+
   return (
     <div className='h-screen flex flex-col gap-2'>
       <DialogConfirmation
@@ -101,6 +143,7 @@ export default function EditorClient<TConfig>({
         setOpen={handleDialogDelete}
         onDelete={handleDelete}
       />
+
       <div className='flex shrink-0 justify-between items-center bg-card rounded-lg p-2 shadow-card border border-border'>
         <h2 className='font-bold'>Decoration</h2>
         <div className='space-x-2.5'>
@@ -125,6 +168,30 @@ export default function EditorClient<TConfig>({
             <Globe />
           </Link>
         </div>
+      </div>
+
+      <div className='flex shrink-0 justify-between items-center bg-card rounded-lg p-2 shadow-card border border-border'>
+        <h2 className='font-bold'>Status</h2>
+
+        <Select
+          onValueChange={handleStatus}
+          value={statusSelected}>
+          <SelectTrigger className='w-full max-w-48'>
+            <SelectValue placeholder='Select a status' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Select Status</SelectLabel>
+              {Object.values(EventStatusType).map((status) => (
+                <SelectItem
+                  key={status}
+                  value={status}>
+                  {status[0].toUpperCase() + status.slice(1).toLowerCase()}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className='flex flex-1 min-h-0 gap-2'>
