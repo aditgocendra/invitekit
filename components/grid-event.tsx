@@ -106,7 +106,7 @@ export default function GridEvent({
           <div
             key={d.id}
             className='relative w-full aspect-9/16 overflow-hidden rounded-xl group shadow-card border border-border'>
-            <div className='relative w-full h-40'>
+            <div className='relative w-full h-full'>
               {d.thumb ? (
                 <Image
                   src={`https://s3.nevaobjects.id/invitekit-bucket/${d.thumb}`}
