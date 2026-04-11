@@ -1,4 +1,4 @@
-import { EventType } from "@/lib/generated/enums";
+import { EventStatus, EventType } from "@/lib/generated/enums";
 import { prisma } from "@/lib/prisma.init";
 
 interface CreateInvitationEventProps {
@@ -58,6 +58,22 @@ export const getEventById = async (id: string) => {
 
 export const getEventBySlug = async (slug: string) => {
   return await prisma.event.findUnique({ where: { slug } });
+};
+
+export const getEventStatsByUserId = async (id: string) => {
+  const [totalEvent, totalActive] = await prisma.$transaction([
+    prisma.event.count({
+      where: { userId: id },
+    }),
+    prisma.event.count({
+      where: {
+        userId: id,
+        status: EventStatus.PUBLISHED,
+      },
+    }),
+  ]);
+
+  return { totalEvent, totalActive };
 };
 
 export const deleteEventById = async (id: string) => {
