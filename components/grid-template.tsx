@@ -45,9 +45,7 @@ export default function GridTemplate({
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent
-                    className='sm:max-w-[725px] max-h-[95vh] flex flex-col '
-                    showCloseButton={false}>
+                  <DialogContent className='sm:max-w-[725px] max-h-[95vh] flex flex-col '>
                     <DialogHeader>
                       <DialogTitle>Create Invitation</DialogTitle>
                       <DialogDescription>
