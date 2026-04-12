@@ -19,35 +19,57 @@ export const getInvitationByEventId = async (
       ? { [props.sortBy]: props.sort }
       : { sentAt: "desc" as Prisma.SortOrder };
 
-  const [invitations, count] = await prisma.$transaction([
-    prisma.invitation.findMany({
-      take: props.take,
-      skip: props.skip,
-      orderBy,
-      where: {
-        eventId: props.eventId,
-        name: { contains: props.name, mode: "insensitive" },
-      },
-      select: {
-        id: true,
-        name: true,
-        phone: true,
-        sentAt: true,
-        slug: true,
-        sentStatus: true,
-        openedAt: true,
-        rsvp: true,
-      },
-    }),
-    prisma.invitation.count({
-      where: {
-        eventId: props.eventId,
-        name: { contains: props.name, mode: "insensitive" },
-      },
-    }),
-  ]);
+  const [invitations, total, totalSented, totalOpened, totalAttendance] =
+    await prisma.$transaction([
+      prisma.invitation.findMany({
+        take: props.take,
+        skip: props.skip,
+        orderBy,
+        where: {
+          eventId: props.eventId,
+          name: { contains: props.name, mode: "insensitive" },
+        },
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          sentAt: true,
+          slug: true,
+          sentStatus: true,
+          openedAt: true,
+          rsvp: true,
+        },
+      }),
+      prisma.invitation.count({
+        where: {
+          eventId: props.eventId,
+          name: { contains: props.name, mode: "insensitive" },
+        },
+      }),
 
-  return { invitations, count };
+      prisma.invitation.count({
+        where: {
+          eventId: props.eventId,
+          sentStatus: SentStatus.SUCCESS,
+        },
+      }),
+
+      prisma.invitation.count({
+        where: {
+          eventId: props.eventId,
+          openedAt: { not: null },
+        },
+      }),
+
+      prisma.invitation.count({
+        where: {
+          eventId: props.eventId,
+          rsvp: { isAttendance: true },
+        },
+      }),
+    ]);
+
+  return { invitations, total, totalSented, totalOpened, totalAttendance };
 };
 
 export const getInvitationById = async (id: string) => {
