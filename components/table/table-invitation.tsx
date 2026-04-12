@@ -48,12 +48,15 @@ import { useLoading } from "@/hooks/use-loading";
 import { toast } from "sonner";
 import { Checkbox } from "../ui/checkbox";
 
-interface TableUserProps {
+interface TableInvitationProps {
   data?: InvitationDTO[];
   totalPages: number;
 }
 
-export default function TableInvitation({ data, totalPages }: TableUserProps) {
+export default function TableInvitation({
+  data,
+  totalPages,
+}: TableInvitationProps) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
@@ -139,7 +142,7 @@ export default function TableInvitation({ data, totalPages }: TableUserProps) {
   };
 
   return (
-    <div className='flex flex-col gap-4 mt-4'>
+    <div className='flex flex-col gap-4 border border-border rounded-xl p-4'>
       <DialogConfirmation
         title='Delete Invitation'
         desc='Are you sure delete this invitation ? This action cannot be undone, and guest will not be able to RSVP.'
