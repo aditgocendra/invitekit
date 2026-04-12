@@ -47,10 +47,6 @@ export default async function Page() {
                 className='text-primary'
               />
             </div>
-
-            {/* <p className='text-sm text-text-secondary font-body'>
-              {feature.description}
-            </p> */}
           </div>
         ))}
       </div>
